@@ -246,13 +246,32 @@ final class SmartRule {
 <App sandbox>/
 └── Documents/                       ← visible in Files and Finder
     ├── Entrada/                     ← drop files here for automatic import
-    ├── Music/                       ← imported audio (managed by the app)
-    └── Backups/
-        └── corymusic-backup-2026-09-14.json
+    └── Music/                       ← imported audio (managed by the app)
+
+<Folder chosen by the user, outside the app>   e.g. On My iPhone › CoryMusic Backups
+└── corymusic-backup-2026-09-15.json          ← 5 most recent kept
 ```
 
 - `fileName` is **relative**; the sandbox path can change between installs.
 - Duplicate = same file name **and** duration (± 1 s).
+- Deleting a song removes its `PlaylistEntry` rows, the `Track`, the audio file in `Music/`, and any album or artist left without tracks.
+- Backups live **outside** the app so they survive deleting it.
+
+## 4b. App settings (`UserDefaults`)
+
+| Key | Type | Default | Purpose |
+|---|---|---|---|
+| `userName` | String? | `nil` | Name asked on the welcome screen |
+| `hasCompletedOnboarding` | Bool | `false` | Show the welcome flow only once |
+| `inboxAutoImport` | Bool | `true` | Import from Entrada on launch |
+| `continueWithSimilar` | Bool | `false` | Keep playing the same artist when the queue ends |
+| `hapticsEnabled` | Bool | `true` | Light haptics on actions |
+| `defaultSleepTimerMinutes` | Int | `30` | First option in the sleep timer |
+| `weeklyBackupEnabled` | Bool | `true` | Automatic weekly backup |
+| `backupFolderBookmark` | Data? | `nil` | Security-scoped bookmark to the backup folder |
+| `lastBackupAt` | Date? | `nil` | Decide when the next weekly backup runs |
+
+Settings are **not** included in backups, except that restore never overwrites `userName`.
 
 ## 5. Backup format (JSON, schemaVersion 1)
 

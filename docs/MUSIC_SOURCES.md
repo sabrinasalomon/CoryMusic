@@ -13,6 +13,21 @@ Getting the files happens **outside the app**, once, by you.
 | **Free downloads offered by the artists** | Bandcamp releases with *name your price* (enter 0), SoundCloud tracks with the download button enabled, official artist websites and promotions |
 | **Creative Commons / public domain** | Internet Archive, Free Music Archive — respect each license (usually attribution) |
 
+## 🔎 Where to find free, legal music
+
+| Site | What you'll find | Check before downloading |
+|---|---|---|
+| **Free Music Archive** — freemusicarchive.org | Independent artists across many genres | License shown on each track |
+| **Internet Archive — Netlabels** — archive.org | Full albums from independent labels | Creative Commons license of each release |
+| **Bandcamp** — bandcamp.com | Artists offering *name your price* releases | Enter **0** as the price |
+| **SoundCloud** — soundcloud.com | Tracks where the artist enabled downloads | Only tracks with the download button |
+| **Jamendo** — jamendo.com (website) | Independent music under free licenses | Personal use terms |
+| **Musopen** — musopen.org | Public-domain classical recordings | Free |
+| **Pixabay Music** — pixabay.com/music | Royalty-free instrumental music | Content license |
+| **Official artist websites** | Free singles and fan gifts | Must be an official download |
+
+For testing the app, start with **20–30 songs** from several artists, mixing files with complete tags and files without them, so the *To review* flow can be tested too.
+
 ## 📲 How files get into CoryMusic (no services)
 
 | Method | How |

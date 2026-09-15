@@ -1,0 +1,67 @@
+{
+  "color-space-for-untagged-svg-colors" : "srgb",
+  "fill" : {
+    "solid" : "srgb:0.00000,0.00000,0.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "name" : "M",
+      "layers" : [
+        {
+          "name" : "M",
+          "glass" : true,
+          "image-name-specializations" : [
+            {
+              "value" : "cm-m.svg"
+            },
+            {
+              "appearance" : "tinted",
+              "value" : "cm-m-mono.svg"
+            }
+          ]
+        }
+      ],
+      "lighting" : "individual",
+      "specular" : true,
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    },
+    {
+      "name" : "C",
+      "layers" : [
+        {
+          "name" : "C",
+          "glass" : true,
+          "image-name-specializations" : [
+            {
+              "value" : "cm-c.svg"
+            },
+            {
+              "appearance" : "tinted",
+              "value" : "cm-c-mono.svg"
+            }
+          ]
+        }
+      ],
+      "lighting" : "individual",
+      "specular" : true,
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 0.35
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}
