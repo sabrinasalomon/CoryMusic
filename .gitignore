@@ -1,0 +1,40 @@
+# ---- Xcode ----
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+timeline.xctimeline
+playground.xcworkspace
+
+# ---- Swift Package Manager ----
+.build/
+.swiftpm/
+
+# ---- macOS ----
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ---- Audio files: never commit music ----
+*.mp3
+*.m4a
+*.aac
+*.wav
+*.flac
+*.aiff
+*.aif
+*.ogg
+*.opus
+*.alac
+
+# ---- Personal backups (keep only *.example.json) ----
+playlists/*.json
+!playlists/*.example.json
+Backups/

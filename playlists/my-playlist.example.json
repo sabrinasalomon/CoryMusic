@@ -1,0 +1,37 @@
+{
+  "app": "CoryMusic",
+  "schemaVersion": 1,
+  "exportedAt": "2026-09-14T00:00:00Z",
+  "artists": [
+    { "name": "Artist One", "isFavorite": true },
+    { "name": "Artist Two", "isFavorite": true }
+  ],
+  "tracks": [
+    {
+      "title": "Song Title A",
+      "artist": "Artist One",
+      "album": "Album Title",
+      "fileName": "artist-one - song-title-a.mp3",
+      "duration": 0,
+      "status": "wanted"
+    },
+    {
+      "title": "Song Title B",
+      "artist": "Artist Two",
+      "album": "",
+      "fileName": "artist-two - song-title-b.m4a",
+      "duration": 0,
+      "status": "wanted"
+    }
+  ],
+  "playlists": [
+    {
+      "name": "Cory Favorites",
+      "coverSymbol": "heart.fill",
+      "tracks": [
+        "artist-one - song-title-a.mp3",
+        "artist-two - song-title-b.m4a"
+      ]
+    }
+  ]
+}

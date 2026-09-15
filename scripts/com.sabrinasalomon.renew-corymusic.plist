@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Runs renew-corymusic.sh every Sunday and Thursday at 10:00.
+     Replace YOUR_MAC_USER with your macOS user name. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.sabrinasalomon.renew-corymusic</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/YOUR_MAC_USER/Developer/CoryMusic/scripts/renew-corymusic.sh</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict>
+      <key>Weekday</key><integer>0</integer>
+      <key>Hour</key><integer>10</integer>
+      <key>Minute</key><integer>0</integer>
+    </dict>
+    <dict>
+      <key>Weekday</key><integer>4</integer>
+      <key>Hour</key><integer>10</integer>
+      <key>Minute</key><integer>0</integer>
+    </dict>
+  </array>
+  <key>StandardOutPath</key>
+  <string>/tmp/renew-corymusic.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/renew-corymusic.log</string>
+</dict>
+</plist>
