@@ -1,101 +1,105 @@
-# 🎧 CoryMusic
+# CoryMusic
 
-> A free, offline-first music player for iOS — your playlists, your artists, zero cost.
+> A premium, offline music player for iOS — your music, your artists, your playlists. No ads, no accounts, no external services, zero cost.
 
-![Platform](https://img.shields.io/badge/iOS-17%2B-000000?style=for-the-badge&logo=apple&logoColor=white)
+![Platform](https://img.shields.io/badge/iOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white)
 ![Swift](https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white)
-![SwiftUI](https://img.shields.io/badge/SwiftUI-0D96F6?style=for-the-badge&logo=swift&logoColor=white)
+![SwiftUI](https://img.shields.io/badge/SwiftUI-Liquid%20Glass-7C3AED?style=for-the-badge&logo=swift&logoColor=white)
 ![Cost](https://img.shields.io/badge/Cost-%240-2EA043?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-7F00FF?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-7C3AED?style=for-the-badge)
 
-CoryMusic is a native iOS app built with **SwiftUI** that plays music stored on your device. It lets you build a library around the artists and playlists you love, keeps playing in the background, and never requires a paid subscription, a server, or an App Store developer account.
+CoryMusic is a native iOS app built with **SwiftUI** and Apple's **Liquid Glass** design system. It plays audio files stored on your iPhone, organizes them around the artists you love, and keeps your playlists up to date automatically — entirely on-device.
+
+> **Status:** analysis and design phase. No app code yet.
 
 ---
 
-## ✨ Features
+## Principles
 
-| Status | Feature |
+| Principle | What it means |
 |---|---|
-| 🟡 Planned | Import songs from the **Files** app (MP3, M4A, AAC, WAV, AIFF, FLAC) |
-| 🟡 Planned | Automatic metadata: title, artist, album, artwork |
-| 🟡 Planned | Library views by **Songs**, **Artists** and **Albums** |
-| 🟡 Planned | Create, edit and reorder **playlists** |
-| 🟡 Planned | Background playback + **Lock Screen / Control Center** controls |
-| 🟡 Planned | Shuffle, repeat, queue |
-| 🟡 Planned | **Backup & restore** playlists as JSON |
-| 🔵 Later | Discover free, legal music via the **Jamendo API** |
+| **Zero cost** | No paid services, no subscriptions, no Apple Developer Program |
+| **No external services** | The app makes no network requests — no streaming, no metadata APIs, no analytics |
+| **No ads** | Never |
+| **Offline-first** | Everything works without internet |
+| **Private** | Your library never leaves your iPhone |
+| **Legal** | Plays only files you have the right to use; no audio in this repository |
 
 ---
 
-## 💸 What it costs
+## Planned features
 
-| Item | Cost |
+| Area | Features |
 |---|---|
-| Xcode, Swift, SwiftUI | $0 |
-| Running on your own iPhone (free Apple ID) | $0 |
-| Backend / servers | $0 — everything is stored on the device |
-| Music | $0 — see [Music Sources](docs/MUSIC_SOURCES.md) |
-| App Store publishing | Not planned (would require the $99/year Apple Developer Program) |
+| **Library** | Import from Files, automatic import from an *Inbox* folder, views by Artists / Albums / Songs, sort, A–Z index |
+| **Metadata** | Read tags and artwork, filename and folder suggestions, review queue for incomplete songs, bulk edit |
+| **Artists** | Artist page with hero image, favorites, latest additions, most played, discography |
+| **Playback** | Background audio, Lock Screen & Control Center, queue, shuffle, repeat, sleep timer, output picker |
+| **Playlists** | Normal playlists, **smart playlists** built from rules, pinned playlist, mosaic / icon / photo / initials covers |
+| **Search** | Instant on-device search with scopes and highlighted matches |
+| **Backup** | Export and restore playlists and edits as JSON |
 
 ---
 
-## 🧱 Tech Stack
+## Design
 
-- **Language:** Swift
-- **UI:** SwiftUI
-- **Audio:** AVFoundation (`AVPlayer`, `AVAudioSession`)
-- **System controls:** MediaPlayer (`MPNowPlayingInfoCenter`, `MPRemoteCommandCenter`)
-- **Persistence:** SwiftData
-- **Architecture:** MVVM + Services
+Pure black background, purple accents and a glass purple **CM** monogram, built on Apple's native design system (Liquid Glass, SF Symbols, New York serif). See [docs/DESIGN.md](docs/DESIGN.md).
 
 ---
 
-## 📚 Documentation
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Language | Swift |
+| UI | SwiftUI (iOS 26, Liquid Glass) |
+| Audio | AVFoundation (`AVPlayer`, `AVAudioSession`) |
+| System controls | MediaPlayer (`MPNowPlayingInfoCenter`, `MPRemoteCommandCenter`) |
+| Persistence | SwiftData |
+| Smart suggestions (optional) | Foundation Models framework, on-device, on Apple Intelligence–capable iPhones |
+| Architecture | MVVM + Services |
+| Third-party dependencies | None |
+
+---
+
+## Documentation
 
 | Document | Contents |
 |---|---|
-| [Requirements](docs/REQUIREMENTS.md) | What you need, functional & non-functional requirements, user stories |
-| [Architecture](docs/ARCHITECTURE.md) | Layers, component & sequence diagrams |
-| [Data Model](docs/DATA_MODEL.md) | Entity-relationship diagram, SwiftData models, backup format |
+| [Requirements](docs/REQUIREMENTS.md) | What you need, functional & non-functional requirements, estimate |
+| [Design](docs/DESIGN.md) | Brand, palette, typography, Liquid Glass rules, screens |
+| [Architecture](docs/ARCHITECTURE.md) | Layers, services, sequence and state diagrams |
+| [Data Model](docs/DATA_MODEL.md) | Entities, smart playlist rules, backup format |
 | [User Flows](docs/USER_FLOWS.md) | Screen map and main flows |
-| [Music Sources](docs/MUSIC_SOURCES.md) | Where the music comes from — legally and for free |
-| [Setup](docs/SETUP.md) | Create the Xcode project, run on iPhone, auto-renew every 7 days |
+| [Music Sources](docs/MUSIC_SOURCES.md) | Where the music comes from and what was ruled out |
+| [Setup](docs/SETUP.md) | Xcode project, run on iPhone, auto-renew every 7 days |
 | [Roadmap](docs/ROADMAP.md) | Phases, milestones and timeline |
 
 ---
 
-## 🗂️ Project Structure
+## Project structure
 
 ```text
 CoryMusic/
 ├── CoryMusic/                  # Xcode app target (created on Mac)
-│   ├── App/                    # App entry point, dependency setup
+│   ├── App/                    # Entry point, dependency setup
+│   ├── DesignSystem/           # Colors, typography, glass styles, components
 │   ├── Models/                 # SwiftData models
-│   ├── Services/               # Audio player, importer, metadata, backup
+│   ├── Services/               # Player, import, metadata, smart playlists, search, backup
 │   ├── ViewModels/             # Screen state and logic
-│   ├── Views/                  # SwiftUI screens and components
-│   └── Resources/              # Assets, Info.plist
-├── docs/                       # Project documentation and diagrams
-├── playlists/                  # Playlist metadata examples (no audio files)
+│   ├── Views/                  # SwiftUI screens
+│   └── Resources/              # Assets, app icon, Info.plist
+├── docs/                       # Documentation and diagrams
+├── playlists/                  # Backup format example (no audio)
 └── scripts/                    # Auto-renew script for free provisioning
 ```
 
 ---
 
-## 🚀 Getting Started
+## Music & copyright
 
-1. Install **Xcode** from the Mac App Store.
-2. Clone this repository.
-3. Follow [docs/SETUP.md](docs/SETUP.md) to create the Xcode project and run it on your iPhone.
+This repository contains **code and documentation only**. Audio files are blocked by `.gitignore`. CoryMusic plays files you have the right to use — see [Music Sources](docs/MUSIC_SOURCES.md).
 
----
-
-## ⚖️ Music & Copyright
-
-This repository contains **code and documentation only**. No audio files are committed — `.gitignore` blocks them. CoryMusic plays files that you have the right to use. See [Music Sources](docs/MUSIC_SOURCES.md).
-
----
-
-## 📄 License
+## License
 
 [MIT](LICENSE) © 2026 sabrinasalomon

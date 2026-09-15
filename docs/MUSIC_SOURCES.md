@@ -1,59 +1,58 @@
 # Music Sources
 
-CoryMusic has one rule: **free for everyone, and legal.** This document explains where music can come from without paying — and which popular options were ruled out and why.
+CoryMusic has three rules: **free, legal, and no external services.** The app itself never connects to the internet. It plays audio files that are already on your iPhone.
 
-## ✅ Supported sources
+Getting the files happens **outside the app**, once, by you.
 
-### 1. Files you already have the right to use (MVP)
-Songs already on your devices: music you bought or downloaded in the past, CDs you ripped, recordings of your own.
-Import them through the **Files** app (iCloud Drive, "On My iPhone", a USB drive, AirDrop from your Mac).
+## ✅ Where the files can come from
 
-### 2. Free downloads offered by the artists themselves (MVP)
-Many artists legally give away their music. Look for:
-| Where | What to look for |
+| Source | Notes |
 |---|---|
-| **Bandcamp** | Releases marked *"name your price"* — you can enter **0** |
-| **SoundCloud** | Tracks where the artist enabled the **Download** button |
-| **Artist websites / newsletters** | Free singles, EPs, live sessions |
-| **Free Music Archive** / **Internet Archive** | Creative Commons and public-domain recordings |
+| **Files you already have** | Music on your computer, drives, old devices |
+| **CDs you own** | Converted to audio files on a computer with a CD drive |
+| **Free downloads offered by the artists** | Bandcamp releases with *name your price* (enter 0), SoundCloud tracks with the download button enabled, official artist websites and promotions |
+| **Creative Commons / public domain** | Internet Archive, Free Music Archive — respect each license (usually attribution) |
 
-Download the file, save it to Files, import it into CoryMusic.
-> Creative Commons licenses usually require **attribution**. CoryMusic keeps the artist name on every track; check each license for extra conditions.
+## 📲 How files get into CoryMusic (no services)
 
-### 3. Jamendo API (later phase)
-- Catalog of independent artists under Creative Commons.
-- **Free for non-commercial apps**, requires a free developer registration (`client_id`), with a monthly request quota.
-- Useful for a *Discover* tab — your specific commercial artists are unlikely to be there.
+| Method | How |
+|---|---|
+| **Finder (cable)** | Mac → Finder → your iPhone → *Files* → CoryMusic → drop files into **Entrada** |
+| **AirDrop** | Send from the Mac, save to CoryMusic → **Entrada** |
+| **Files app** | Move files into *On My iPhone* → CoryMusic → **Entrada**, or use *Importar* inside the app |
+
+With **Entrada** auto-import on, the songs appear in the library the next time you open the app.
+
+## 🎯 Following your favorite artists
+
+1. Mark the artist as **favorite** on the artist page.
+2. Accept the **Lo nuevo de [Artista]** smart playlist.
+3. When you obtain a new song from that artist and drop it into **Entrada**, it is imported and appears in that playlist automatically.
+
+The app **cannot discover** new releases by itself — that would require an external service.
 
 ## ❌ Ruled out
 
-| Option | Why it is not used |
+| Option | Reason |
 |---|---|
-| **Spotify SDK** | Since February 2026, Development Mode requires a **Spotify Premium** account for the developer and allows only a handful of test users. On-demand playback of a specific track also requires Premium. → Not free. |
-| **Apple Music (MusicKit)** | Requires the paid Apple Developer Program and an Apple Music subscription for every user. → Not free. |
-| **YouTube** | YouTube API policies forbid separating the audio from videos and forbid background playback. A music player built on YouTube would break its terms. |
-| **Downloading from YouTube / streaming rips / "free MP3" sites** | Copyright infringement. Not supported, not documented. |
-
-## 🎯 How to add your favorite artists
-
-1. List your playlist in [`playlists/my-playlist.example.json`](../playlists/my-playlist.example.json) (title + artist only — no audio).
-2. For each song, check in this order:
-   1. Do I already have the file? → import it.
-   2. Does the artist offer it for free (Bandcamp "name your price", SoundCloud download, official site)? → download and import.
-   3. Is it under Creative Commons? → download, keep attribution, import.
-3. Songs that are not available for free legally stay in the list as **"wanted"** — you can still listen to them in the official free tier of a streaming app.
+| Spotify SDK | External service; since February 2026 Development Mode requires Spotify Premium and allows few test users |
+| Apple Music (MusicKit) | External service; requires the paid Apple Developer Program and a subscription per user |
+| YouTube (app, links or embedded player) | External service with ads; its policies forbid audio-only and background playback |
+| Deezer, iTunes Search, MusicBrainz APIs | External services (were considered for detecting new releases) |
+| Jamendo API | External service |
+| ShazamKit recognition | Needs network access to Apple's catalog |
+| Downloading from YouTube, stream rips or "free MP3" sites | Copyright infringement — not supported |
 
 ## 🗃️ What goes into Git
 
 | Commit | Never commit |
 |---|---|
-| Code, docs, diagrams | `.mp3`, `.m4a`, `.wav`, `.flac`, `.aac`, `.aiff` files |
-| Playlist **metadata** (titles, artists) | Artwork scraped from the internet |
-| Example backup JSON | Personal backups with private data |
+| Code, docs, diagrams | Audio files (`.mp3`, `.m4a`, `.wav`, `.flac`, `.aac`, `.aiff`, …) |
+| Backup **format example** | Personal backups, artist photos, artwork |
 
-The repository `.gitignore` blocks audio files automatically.
+`.gitignore` blocks audio files and personal backups automatically.
 
 ## References
-- [Jamendo API](https://developer.jamendo.com/v3.0)
 - [Spotify — Update on Developer Access and Platform Security (Feb 2026)](https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security)
 - [YouTube API Services — Developer Policies](https://developers.google.com/youtube/terms/developer-policies)
+- [YouTube API Services — Required Minimum Functionality](https://developers.google.com/youtube/terms/required-minimum-functionality)

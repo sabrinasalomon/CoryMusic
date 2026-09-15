@@ -2,35 +2,53 @@
   "app": "CoryMusic",
   "schemaVersion": 1,
   "exportedAt": "2026-09-14T00:00:00Z",
-  "artists": [
-    { "name": "Artist One", "isFavorite": true },
-    { "name": "Artist Two", "isFavorite": true }
-  ],
+  "favoriteArtists": ["Artist One"],
   "tracks": [
     {
+      "fileName": "artist-one - song-title-a.mp3",
+      "duration": 201.0,
       "title": "Song Title A",
       "artist": "Artist One",
       "album": "Album Title",
-      "fileName": "artist-one - song-title-a.mp3",
-      "duration": 0,
-      "status": "wanted"
+      "year": 2026,
+      "isFavorite": true,
+      "playCount": 0,
+      "lyrics": null
     },
     {
+      "fileName": "artist-two - song-title-b.m4a",
+      "duration": 187.5,
       "title": "Song Title B",
       "artist": "Artist Two",
       "album": "",
-      "fileName": "artist-two - song-title-b.m4a",
-      "duration": 0,
-      "status": "wanted"
+      "year": null,
+      "isFavorite": false,
+      "playCount": 0,
+      "lyrics": null
     }
   ],
   "playlists": [
     {
-      "name": "Cory Favorites",
-      "coverSymbol": "heart.fill",
+      "name": "Mis favoritas",
+      "kind": "normal",
+      "isPinned": true,
+      "cover": { "style": "symbol", "symbol": "heart.fill" },
       "tracks": [
         "artist-one - song-title-a.mp3",
         "artist-two - song-title-b.m4a"
+      ]
+    },
+    {
+      "name": "Lo nuevo de Artist One",
+      "kind": "smart",
+      "isPinned": false,
+      "cover": { "style": "initials" },
+      "matchMode": "all",
+      "sortBy": "recentlyAdded",
+      "limit": null,
+      "rules": [
+        { "field": "artist", "condition": "is", "value": "Artist One" },
+        { "field": "importedAt", "condition": "inTheLast", "value": "30d" }
       ]
     }
   ]

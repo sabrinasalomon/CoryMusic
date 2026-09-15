@@ -1,39 +1,45 @@
 # User Flows
 
+UI labels follow the glossary in [DESIGN.md](DESIGN.md#9-naming-glossary-ui-copy).
+
 ## 1. Screen map
 
 ```mermaid
 flowchart LR
     Launch([App launch]) --> Tabs
 
-    subgraph Tabs["Tab bar"]
-        T1[🎵 Library]
-        T2[📃 Playlists]
-        T3[🔍 Search]
-        T4[⚙️ Settings]
+    subgraph Tabs["Tab bar - Liquid Glass"]
+        T1[Inicio]
+        T2[Biblioteca]
+        T3[Playlists]
+        T4[Buscar]
     end
 
-    T1 --> Songs[Songs list]
-    T1 --> Artists[Artists list]
-    T1 --> Albums[Albums grid]
-    Artists --> ArtistDetail[Artist detail]
-    Albums --> AlbumDetail[Album detail]
-    T1 --> Import[Import from Files]
+    T1 --> Settings[Ajustes]
+    T1 --> Recent[Recién llegadas]
+    T1 --> MoreFrom[Más de artista]
 
-    T2 --> PlaylistDetail[Playlist detail]
-    T2 --> NewPlaylist[New playlist]
-    PlaylistDetail --> AddSongs[Add songs sheet]
-    PlaylistDetail --> Reorder[Edit / reorder]
+    T2 --> Artists[Artistas]
+    T2 --> Albums[Álbumes]
+    T2 --> Songs[Canciones]
+    T2 --> Import[Importar - hoja]
+    T2 --> Review[Por revisar]
+    Artists --> ArtistPage[Página de artista]
+    Albums --> AlbumPage[Álbum]
+    Review --> EditSong[Revisar canción]
 
-    T3 --> Results[Results: songs · artists · albums]
+    T3 --> Pinned[Playlist fijada]
+    T3 --> Detail[Detalle de playlist]
+    T3 --> Create[Nueva playlist - hoja]
+    Create --> RuleEditor[Editor de reglas]
 
-    T4 --> Backup[Export backup]
-    T4 --> Restore[Restore backup]
-    T4 --> About[About & licenses]
+    T4 --> Results[Resultados con filtros]
 
-    Songs & ArtistDetail & AlbumDetail & PlaylistDetail & Results --> Mini[Mini player]
-    Mini --> NowPlaying[Now Playing]
-    NowPlaying --> Queue[Up Next queue]
+    Settings --> Backup[Respaldo y restauración]
+
+    Tabs -.-> Mini[Mini reproductor]
+    Mini --> NowPlaying[Reproduciendo]
+    NowPlaying --> Queue[Cola]
 ```
 
 ## 2. First launch
@@ -41,53 +47,90 @@ flowchart LR
 ```mermaid
 flowchart TD
     A([Open CoryMusic]) --> B{Library empty?}
-    B -- Yes --> C[Empty state:<br/>'Import your music']
-    C --> D[Tap Import]
-    D --> E[Files picker]
-    E --> F[Import progress]
-    F --> G[Summary: added / skipped / failed]
-    G --> H[Library by Artists]
-    B -- No --> H
+    B -- Yes --> C[CM monogram + Importar tu música]
+    C --> D{How?}
+    D -- Files --> E[Files picker]
+    D -- Mac or AirDrop --> F[Copy files to Entrada]
+    E & F --> G[Import progress]
+    G --> H[Summary: imported, duplicates, to review]
+    H --> I[Inicio]
+    B -- No --> J[Scan Entrada folder]
+    J --> I
 ```
 
-## 3. Build a playlist with your favorite artists
+## 3. Automatic import from Entrada
 
 ```mermaid
 flowchart TD
-    A[Playlists tab] --> B[Tap +]
-    B --> C[Name + cover icon]
-    C --> D[Empty playlist]
-    D --> E[Add songs]
-    E --> F{Browse by}
-    F -- Artist --> G[Pick artist → select songs]
-    F -- Search --> H[Type title → select songs]
-    G & H --> I[Songs added at the end]
-    I --> J[Edit → drag to reorder]
-    J --> K[Play / Shuffle]
+    A[User copies songs to Entrada via Finder, AirDrop or Files] --> B[User opens CoryMusic]
+    B --> C{Inbox auto-import on?}
+    C -- No --> Z[Files wait in Entrada]
+    C -- Yes --> D[Import new files]
+    D --> E{Tags complete?}
+    E -- Yes --> F[Added to library]
+    E -- No --> G[Added with suggestion to Por revisar]
+    F & G --> H[Smart playlists update]
+    H --> I[Notice in Biblioteca: N canciones nuevas desde Entrada]
 ```
 
-## 4. Backup & restore
+## 4. Fix incomplete songs
 
 ```mermaid
 flowchart TD
-    A[Settings] --> B{Action}
-    B -- Export --> C[BackupService encodes JSON]
-    C --> D[Share sheet / save to Files]
-    B -- Restore --> E[Pick JSON in Files]
+    A[Por revisar] --> B{Has suggestion?}
+    B -- Yes --> C[Revisar canción: suggestion card]
+    C --> D{Accept?}
+    D -- Accept --> E[Fields filled, editable]
+    D -- Ignore --> F[Fill manually with autocomplete]
+    B -- No --> F
+    E & F --> G{Apply to same folder?}
+    G -- Yes --> H[Album, artist, artwork applied to group]
+    G -- No --> I[Save]
+    H --> I
+    I --> J[Leaves Por revisar and joins matching smart playlists]
+    A --> K[Select several songs] --> L[Bulk edit artist, album or artwork]
+    A --> M[Accept all suggestions]
+```
+
+## 5. Create a playlist
+
+```mermaid
+flowchart TD
+    A[Playlists] --> B[Glass plus button]
+    B --> C[Nueva playlist sheet]
+    C --> D{Type}
+    D -- Normal --> E[Name + cover]
+    E --> F[Agregar canciones: songs, albums or artists]
+    F --> G[Detail: reorder, remove with undo]
+    D -- Smart --> H[Name + cover]
+    H --> I[Editor de reglas: match, rules, sort, limit]
+    I --> J[Live preview count]
+    J --> K[Save - updates automatically]
+```
+
+## 6. Favorite artist to smart playlist
+
+```mermaid
+flowchart TD
+    A[Artist page] --> B[Tap heart]
+    B --> C[Artist marked favorite]
+    C --> D{Create Lo nuevo de artista?}
+    D -- Yes --> E[Smart playlist: artist is X and imported in last 30 days]
+    D -- No --> F[Done]
+    E --> G[New songs from X appear automatically after import]
+```
+
+## 7. Backup & restore
+
+```mermaid
+flowchart TD
+    A[Ajustes] --> B{Action}
+    B -- Export --> C[Encode playlists, rules, favorites, edits]
+    C --> D[Save JSON to Files]
+    B -- Restore --> E[Pick JSON]
     E --> F{schemaVersion supported?}
-    F -- No --> G[Show error]
+    F -- No --> G[Error message]
     F -- Yes --> H[Match tracks by fileName + duration]
-    H --> I[Recreate playlists]
-    I --> J[Report: restored / missing songs]
+    H --> I[Recreate playlists and rules]
+    I --> J[Report: restored and missing songs]
 ```
-
-## 5. Screens checklist
-
-| Screen | Main components |
-|---|---|
-| Library | Segmented control (Songs · Artists · Albums), Import button, list/grid |
-| Artist detail | Header with name + favorite toggle, Play / Shuffle, songs list |
-| Playlist detail | Cover, name, song count & total time, Play / Shuffle, editable list |
-| Now Playing | Artwork, title/artist, progress slider, controls, shuffle/repeat, queue button |
-| Mini player | Artwork thumbnail, title, play/pause, next — pinned above the tab bar |
-| Settings | Backup, Restore, storage used, About |
