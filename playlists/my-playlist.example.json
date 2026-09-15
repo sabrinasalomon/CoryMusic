@@ -16,7 +16,8 @@
       "isFavorite": true,
       "playCount": 12,
       "lastPlayedAt": 1789500000000,
-      "importedAt": 1789000000000
+      "importedAt": 1789000000000,
+      "lyrics": "[00:12.00]First line of the song\n[00:15.50]Second line of the song"
     },
     {
       "originalName": "Iris Vale - Paper Satellites.m4a",
@@ -26,7 +27,8 @@
       "isFavorite": false,
       "playCount": 3,
       "lastPlayedAt": null,
-      "importedAt": 1789100000000
+      "importedAt": 1789100000000,
+      "lyrics": null
     }
   ],
   "smartPlaylists": [

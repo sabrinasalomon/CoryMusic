@@ -14,12 +14,14 @@ export type Track = {
   playCount: number;
   lastPlayedAt: number | null;
   isFavorite: boolean;
+  lyrics: string | null;
 };
 
 export type TrackStats = {
   isFavorite: boolean;
   playCount: number;
   lastPlayedAt: number | null;
+  lyrics: string | null;
 };
 
 type TrackRow = {
@@ -33,6 +35,7 @@ type TrackRow = {
   play_count: number;
   last_played_at: number | null;
   is_favorite: number;
+  lyrics: string | null;
 };
 
 type PlaylistRow = {
@@ -56,6 +59,7 @@ type PendingRow = {
   is_favorite: number;
   play_count: number;
   last_played_at: number | null;
+  lyrics: string | null;
 };
 
 const db = openDatabaseSync('corymusic.db');
@@ -73,7 +77,8 @@ db.execSync(`
     imported_at INTEGER NOT NULL,
     play_count INTEGER NOT NULL DEFAULT 0,
     last_played_at INTEGER,
-    is_favorite INTEGER NOT NULL DEFAULT 0
+    is_favorite INTEGER NOT NULL DEFAULT 0,
+    lyrics TEXT
   );
   CREATE TABLE IF NOT EXISTS playlists (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,6 +104,7 @@ db.execSync(`
     is_favorite INTEGER NOT NULL DEFAULT 0,
     play_count INTEGER NOT NULL DEFAULT 0,
     last_played_at INTEGER,
+    lyrics TEXT,
     PRIMARY KEY (original_name, size_bytes)
   );
 `);
@@ -107,6 +113,10 @@ const trackColumns = db.getAllSync<{ name: string }>('PRAGMA table_info(tracks)'
 if (!trackColumns.includes('play_count')) db.execSync('ALTER TABLE tracks ADD COLUMN play_count INTEGER NOT NULL DEFAULT 0');
 if (!trackColumns.includes('last_played_at')) db.execSync('ALTER TABLE tracks ADD COLUMN last_played_at INTEGER');
 if (!trackColumns.includes('is_favorite')) db.execSync('ALTER TABLE tracks ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0');
+if (!trackColumns.includes('lyrics')) db.execSync('ALTER TABLE tracks ADD COLUMN lyrics TEXT');
+
+const pendingColumns = db.getAllSync<{ name: string }>('PRAGMA table_info(pending_track_stats)').map((column) => column.name);
+if (!pendingColumns.includes('lyrics')) db.execSync('ALTER TABLE pending_track_stats ADD COLUMN lyrics TEXT');
 
 function toTrack(row: TrackRow): Track {
   return {
@@ -120,6 +130,7 @@ function toTrack(row: TrackRow): Track {
     playCount: row.play_count,
     lastPlayedAt: row.last_played_at,
     isFavorite: row.is_favorite === 1,
+    lyrics: row.lyrics,
   };
 }
 
@@ -142,6 +153,7 @@ export function mergeTrackStats(trackId: number, stats: TrackStats): void {
     `UPDATE tracks SET
        is_favorite = MAX(is_favorite, ?),
        play_count = MAX(play_count, ?),
+       lyrics = COALESCE(lyrics, ?),
        last_played_at = CASE
          WHEN ? IS NULL THEN last_played_at
          WHEN last_played_at IS NULL OR ? > last_played_at THEN ?
@@ -150,6 +162,7 @@ export function mergeTrackStats(trackId: number, stats: TrackStats): void {
      WHERE id = ?`,
     stats.isFavorite ? 1 : 0,
     stats.playCount,
+    stats.lyrics,
     stats.lastPlayedAt,
     stats.lastPlayedAt,
     stats.lastPlayedAt,
@@ -159,12 +172,13 @@ export function mergeTrackStats(trackId: number, stats: TrackStats): void {
 
 export function savePendingStats(originalName: string, sizeBytes: number, stats: TrackStats): void {
   db.runSync(
-    'INSERT OR REPLACE INTO pending_track_stats (original_name, size_bytes, is_favorite, play_count, last_played_at) VALUES (?, ?, ?, ?, ?)',
+    'INSERT OR REPLACE INTO pending_track_stats (original_name, size_bytes, is_favorite, play_count, last_played_at, lyrics) VALUES (?, ?, ?, ?, ?, ?)',
     originalName,
     sizeBytes,
     stats.isFavorite ? 1 : 0,
     stats.playCount,
     stats.lastPlayedAt,
+    stats.lyrics,
   );
 }
 
@@ -185,12 +199,17 @@ export function insertTrack(track: Pick<Track, 'title' | 'artist' | 'fileName' |
   const id = result.lastInsertRowId;
 
   const pending = db.getFirstSync<PendingRow>(
-    'SELECT is_favorite, play_count, last_played_at FROM pending_track_stats WHERE original_name = ? AND size_bytes = ?',
+    'SELECT is_favorite, play_count, last_played_at, lyrics FROM pending_track_stats WHERE original_name = ? AND size_bytes = ?',
     track.originalName,
     track.sizeBytes,
   );
   if (pending) {
-    mergeTrackStats(id, { isFavorite: pending.is_favorite === 1, playCount: pending.play_count, lastPlayedAt: pending.last_played_at });
+    mergeTrackStats(id, {
+      isFavorite: pending.is_favorite === 1,
+      playCount: pending.play_count,
+      lastPlayedAt: pending.last_played_at,
+      lyrics: pending.lyrics,
+    });
     db.runSync('DELETE FROM pending_track_stats WHERE original_name = ? AND size_bytes = ?', track.originalName, track.sizeBytes);
   }
 
@@ -203,6 +222,10 @@ export function recordPlay(trackId: number): void {
 
 export function setFavorite(trackId: number, favorite: boolean): void {
   db.runSync('UPDATE tracks SET is_favorite = ? WHERE id = ?', favorite ? 1 : 0, trackId);
+}
+
+export function setLyrics(trackId: number, lyrics: string | null): void {
+  db.runSync('UPDATE tracks SET lyrics = ? WHERE id = ?', lyrics, trackId);
 }
 
 export function listSmartPlaylists(): SmartPlaylist[] {

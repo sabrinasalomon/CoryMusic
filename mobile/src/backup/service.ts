@@ -73,6 +73,7 @@ export function buildBackup(profile: { name: string; language: LanguagePreferenc
       playCount: track.playCount,
       lastPlayedAt: track.lastPlayedAt,
       importedAt: track.importedAt,
+      lyrics: track.lyrics,
     })),
     smartPlaylists: listSmartPlaylists().map((playlist) => ({
       name: playlist.name,
@@ -143,7 +144,7 @@ export function restoreLibraryData(backup: Backup): RestoreReport {
   let matched = 0;
   let pending = 0;
   for (const track of backup.tracks) {
-    const stats = { isFavorite: track.isFavorite, playCount: track.playCount, lastPlayedAt: track.lastPlayedAt };
+    const stats = { isFavorite: track.isFavorite, playCount: track.playCount, lastPlayedAt: track.lastPlayedAt, lyrics: track.lyrics };
     const trackId = findTrackIdByOriginal(track.originalName, track.sizeBytes);
     if (trackId !== null) {
       mergeTrackStats(trackId, stats);

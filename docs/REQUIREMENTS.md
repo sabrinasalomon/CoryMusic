@@ -99,7 +99,7 @@
 | FR-23 | Background playback and Lock Screen controls: play or pause, position and 10-second skips | Must | 🧪 configured, works in the installed app |
 | FR-25 | Sleep timer: 15, 30, 45 or 60 minutes, or at the end of the song | Should | ✅ |
 | FR-59 | Fade-out when the sleep timer ends | Could | 🔜 |
-| FR-27 | Lyrics written or pasted by the user | Could | 🔜 |
+| FR-27 | Lyrics written or pasted by the user; synced when they include LRC times: current line highlighted, auto-scroll, tap a line to jump; included in backups | Could | ✅ |
 | FR-51 | Continue with similar songs when the queue ends | Should | 🔜 |
 
 ### Playlists

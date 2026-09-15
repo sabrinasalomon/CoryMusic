@@ -21,6 +21,7 @@ flowchart LR
     Tabs --> Mini[Mini player]
     Mini --> Player[Now Playing]
     Player --> Queue[Queue]
+    Player --> Lyrics[Lyrics]
 
     T1 --> Profile[Profile]
     T1 --> Settings[Settings]
@@ -144,7 +145,24 @@ flowchart TD
     M -- End of queue --> Q[Stop]
 ```
 
-## 8. Backup and restore
+## 8. Lyrics
+
+```mermaid
+flowchart TD
+    A[Now Playing - lyrics button] --> B{Song has lyrics?}
+    B -- No --> C[Empty state - Add lyrics]
+    C --> D[Editor - paste or write]
+    B -- Yes --> E{LRC times in the text?}
+    E -- No --> F[Plain lyrics to read]
+    E -- Yes --> G[Synced lyrics]
+    G --> H[Current line lights up and scrolls with the song]
+    G --> I[Tap a line - jump to that moment]
+    F & G -- Pencil --> D
+    D -- Save --> J[Stored with the song and included in backups]
+    D -- Delete lyrics --> K[Confirmation - the song stays]
+```
+
+## 9. Backup and restore
 
 ```mermaid
 flowchart TD
@@ -170,11 +188,10 @@ flowchart TD
     S{No backup saved outside the app in 7 days?} -- Yes --> T[Amber reminder on the Backup screen]
 ```
 
-## 9. Planned flows
+## 10. Planned flows
 
 | Flow | Summary |
 |---|---|
-| Lyrics | Write or paste lyrics and read them from Now Playing |
 | Delete a song | Confirmation, then remove from library, playlists and storage |
 | To review | Complete missing song data with suggestions |
 | Entrada folder | Automatic import from CoryMusic's own folder in Files |

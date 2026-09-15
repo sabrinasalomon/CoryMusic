@@ -12,6 +12,7 @@ import {
   recordPlay as storePlay,
   saveSmartPlaylist as storeSmartPlaylist,
   setFavorite,
+  setLyrics,
 } from '../library/db';
 import type { Track } from '../library/db';
 import { pickMusicFolder, scanMusicFolder } from '../library/folder';
@@ -41,6 +42,7 @@ type LibraryContextValue = {
   forgetMusicFolder: () => void;
   toggleFavorite: (track: Track) => void;
   recordPlay: (trackId: number) => void;
+  saveLyrics: (trackId: number, lyrics: string | null) => void;
   saveSmartPlaylist: (draft: SmartPlaylistDraft) => number;
   deleteSmartPlaylist: (id: number) => void;
   reload: () => void;
@@ -177,6 +179,11 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     setTracks(listTracks());
   }, []);
 
+  const saveLyrics = useCallback((trackId: number, lyrics: string | null) => {
+    setLyrics(trackId, lyrics && lyrics.trim() ? lyrics.replace(/\s+$/, '') : null);
+    setTracks(listTracks());
+  }, []);
+
   const saveSmartPlaylist = useCallback((draft: SmartPlaylistDraft) => {
     const id = storeSmartPlaylist(draft);
     setSmartPlaylists(listSmartPlaylists());
@@ -211,11 +218,13 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       forgetMusicFolder,
       toggleFavorite,
       recordPlay,
+      saveLyrics,
       saveSmartPlaylist,
       deleteSmartPlaylist,
       reload,
     };
   }, [
+    saveLyrics,
     tracks,
     smartPlaylists,
     musicFolder,

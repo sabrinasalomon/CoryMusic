@@ -27,6 +27,7 @@ erDiagram
         INTEGER play_count
         INTEGER last_played_at "epoch ms, nullable"
         INTEGER is_favorite "0 or 1"
+        TEXT lyrics "nullable, plain or LRC"
     }
     PLAYLISTS {
         INTEGER id PK
@@ -52,17 +53,19 @@ erDiagram
         INTEGER is_favorite
         INTEGER play_count
         INTEGER last_played_at "nullable"
+        TEXT lyrics "nullable"
     }
 ```
 
 - Smart playlists store **rules, not songs**. Results are computed in `mobile/src/smart/rules.ts` every time tracks change.
 - A song is identified across imports and backups by its **original file name + size**. The same pair is used to skip duplicates.
-- `PENDING_TRACK_STATS` keeps favorites and plays from a restored backup for songs that aren't imported yet. When the song is imported, its data is merged and the pending row is removed.
+- `tracks.lyrics` holds lyrics typed or pasted by the user. Lines with times like `[01:23.45]` are read as synced lyrics by `mobile/src/lyrics/lrc.ts`.
+- `PENDING_TRACK_STATS` keeps favorites, plays and lyrics from a restored backup for songs that aren't imported yet. When the song is imported, its data is merged and the pending row is removed.
 - Deleting a playlist removes its rules; songs stay in the library.
 
 ## 2. Schema migrations
 
-`library/db.ts` creates the tables if they don't exist and adds new track columns (`play_count`, `last_played_at`, `is_favorite`) to databases created by earlier versions.
+`library/db.ts` creates the tables if they don't exist and adds new columns to databases created by earlier versions: `play_count`, `last_played_at`, `is_favorite` and `lyrics` on `tracks`, and `lyrics` on `pending_track_stats`.
 
 ## 3. Smart playlist rules
 
@@ -128,7 +131,8 @@ File name: `corymusic-backup-YYYY-MM-DD-HHMMSS.json`. Audio files are **never** 
       "isFavorite": true,
       "playCount": 12,
       "lastPlayedAt": 1789500000000,
-      "importedAt": 1789000000000
+      "importedAt": 1789000000000,
+      "lyrics": "[00:12.00]First line of the song\n[00:15.50]Second line of the song"
     }
   ],
   "smartPlaylists": [
@@ -152,8 +156,9 @@ File name: `corymusic-backup-YYYY-MM-DD-HHMMSS.json`. Audio files are **never** 
 |---|---|
 | Safety | A backup of the current library is written first |
 | Profile | Name (when present), language and photo are restored |
-| Songs already in the app | Favorites are kept if either side has them; the higher play count and the most recent last played date win |
-| Songs not in the app | Saved as pending and applied when the song is imported |
+| Songs already in the app | Favorites are kept if either side has them; the higher play count and the most recent last played date win; lyrics are restored only if the song has none |
+| Songs not in the app | Favorites, plays and lyrics are saved as pending and applied when the song is imported |
+| Older backups | `lyrics` is optional, so backups made before lyrics existed still restore |
 | Smart playlists | A playlist with the same name is updated; others are added |
 | Invalid files | Rejected: the file must say `"app": "CoryMusic"` and `"schemaVersion": 1` |
 
@@ -166,4 +171,3 @@ A ready-to-read example lives in [`playlists/my-playlist.example.json`](../playl
 | `albums` table and artwork | Album pages and covers from file tags |
 | `tracks.needs_review`, suggestion data | *To review* queue |
 | Normal playlists with ordered entries | Hand-made playlists |
-| `tracks.lyrics` | Lyrics written by the user |

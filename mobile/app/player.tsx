@@ -115,7 +115,16 @@ export default function PlayerScreen() {
           </Text>
         ) : null}
       </View>
-      <View style={styles.headerSpacer} />
+      {currentTrack ? (
+        <GlassIconButton
+          symbol={currentTrack.lyrics ? 'quote.bubble.fill' : 'quote.bubble'}
+          accessibilityLabel={t('lyrics.open')}
+          onPress={() => router.push({ pathname: '/lyrics', params: { id: String(currentTrack.id) } })}
+          size={40}
+        />
+      ) : (
+        <View style={styles.headerSpacer} />
+      )}
     </View>
   );
 

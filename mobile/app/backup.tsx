@@ -57,6 +57,7 @@ export default function BackupScreen() {
 
   const track = { false: colors.borderStrong, true: colors.primary };
   const favorites = tracks.filter((item) => item.isFavorite).length;
+  const withLyrics = tracks.filter((item) => item.lyrics).length;
 
   return (
     <View style={styles.root}>
@@ -92,6 +93,7 @@ export default function BackupScreen() {
         <Section title={t('backup.includedTitle')}>
           <Item symbol="checkmark.circle.fill" tint={colors.accent} label={t('backup.includedPlaylists')} trailing={<Text style={type.subhead}>{smartPlaylists.length}</Text>} />
           <Item symbol="checkmark.circle.fill" tint={colors.accent} label={t('backup.includedFavorites')} trailing={<Text style={type.subhead}>{favorites}</Text>} />
+          <Item symbol="checkmark.circle.fill" tint={colors.accent} label={t('backup.includedLyrics')} trailing={<Text style={type.subhead}>{withLyrics}</Text>} />
           <Item symbol="checkmark.circle.fill" tint={colors.accent} label={t('backup.includedProfile')} />
           <Item symbol="xmark.circle" tint={colors.textSecondary} label={t('backup.excludedAudio')} hint={t('backup.excludedAudioHint')} last />
         </Section>

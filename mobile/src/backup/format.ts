@@ -14,6 +14,7 @@ export type BackupTrack = {
   playCount: number;
   lastPlayedAt: number | null;
   importedAt: number;
+  lyrics: string | null;
 };
 
 export type BackupPlaylist = {
@@ -59,6 +60,7 @@ function parseTrack(value: unknown): BackupTrack | null {
     playCount: Math.max(0, Math.floor(asNumber(value.playCount))),
     lastPlayedAt: asNullableNumber(value.lastPlayedAt),
     importedAt: asNumber(value.importedAt, Date.now()),
+    lyrics: typeof value.lyrics === 'string' && value.lyrics.trim() ? value.lyrics : null,
   };
 }
 

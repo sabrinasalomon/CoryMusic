@@ -62,6 +62,7 @@
 | **Music folder** | Choose a folder such as OneDrive › Music and sync new songs, including subfolders; change or forget it anytime |
 | **Library** | Songs and artists, artist and title read from the file name |
 | **Now Playing** | Full-screen player with a draggable progress bar, next, previous, shuffle, repeat, queue and sleep timer; mini player above the tab bar; Play and Shuffle for your library and smart playlists |
+| **Lyrics** | Paste or write lyrics for any song; synced LRC lyrics light up, scroll with the song and let you tap a line to jump; included in backups |
 | **Favorites and plays** | Mark favorites with a heart; plays are counted after half the song |
 | **Smart playlists** | Rules by artist, title, import date, plays, last played and favorite; match all or any; sort, limit and live preview; four one-tap suggestions |
 | **Profile** | Photo from your gallery, name, in-app language (System, Español, English) and library stats |
@@ -73,7 +74,7 @@
 
 | Area | Planned |
 |---|---|
-| **Playback** | Lyrics and a fade-out when the sleep timer ends |
+| **Playback** | Fade-out when the sleep timer ends, continue with similar songs |
 | **Metadata** | Albums and artwork from file tags, review queue, on-device suggestions |
 | **Library** | Album pages, search results, normal playlists, delete with confirmation |
 | **Entrada folder** | Automatic import from CoryMusic's own folder in Files |
@@ -136,13 +137,14 @@ CoryMusic/
 │   └── screenshots/          # App screens used in this README
 ├── docs/                     # Documentation and diagrams
 ├── mobile/                   # The Expo app
-│   ├── app/                  # Screens (Expo Router): tabs, welcome, now playing, queue, profile, settings, backup, smart playlists
+│   ├── app/                  # Screens (Expo Router): tabs, welcome, now playing, queue, lyrics, profile, settings, backup, smart playlists
 │   ├── assets/               # App icon
 │   └── src/
 │       ├── backup/           # Backup format, save, share and restore
 │       ├── components/       # Screen, buttons, cards, track rows, avatar
 │       ├── i18n/             # English and Spanish strings
 │       ├── library/          # SQLite, file import, folder sync
+│       ├── lyrics/           # Plain and synced (LRC) lyrics
 │       ├── smart/            # Smart playlist rules engine
 │       ├── state/            # Profile, library, backup and player providers
 │       ├── storage/          # Key-value settings

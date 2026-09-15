@@ -12,7 +12,7 @@ Pace: about **24 hours per week**. Dates for upcoming phases are estimates.
 | **v0.3 Smart playlists** | Rules engine, editor with live preview, detail screen, four suggestions, favorites, play counting | ✅ |
 | **v0.4 Music folder** | Choose, sync, change and forget a music folder, including subfolders | ✅ |
 | **v0.5 Backup & installed app** | Save and restore backups, weekly automatic backups, pending songs; background audio and Lock Screen details for the installed app; install guide | ✅ |
-| **v0.6 Now Playing** | Full-screen player, mini player, queue, shuffle, repeat, sleep timer, Play and Shuffle buttons, Lock Screen controls | ✅ |
+| **v0.6 Now Playing & lyrics** | Full-screen player, mini player, queue, shuffle, repeat, sleep timer, Play and Shuffle buttons, Lock Screen controls; lyrics with synced LRC support | ✅ |
 
 ## Next
 

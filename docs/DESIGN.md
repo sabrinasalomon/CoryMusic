@@ -128,7 +128,8 @@ Icons are **SF Symbols** through `expo-symbols`.
 | Playing song | Waveform symbol and purple title |
 | Now Playing artwork | Springs to full size when playing, slightly smaller when paused |
 | Now Playing | Native modal, swipe down to close |
-| Sheets (Settings, Profile, rule editor, Backup, Queue) | Native form sheets with grabber |
+| Synced lyrics | Current line turns purple and scrolls to the upper third; auto-scroll pauses for 3 seconds after a manual scroll |
+| Sheets (Settings, Profile, rule editor, Backup, Queue, Lyrics) | Native form sheets with grabber |
 
 ## 8. Screens
 
@@ -148,7 +149,7 @@ Icons are **SF Symbols** through `expo-symbols`.
 | **Mini player** | ✅ | Tab bar accessory: artwork, title, artist, play or pause, next; only title and play when the tab bar minimizes |
 | **Queue** | ✅ | Form sheet: now playing card, Up next list, tap to jump, minus button to remove |
 | **Sleep timer** | ✅ | Native action sheet: 15, 30, 45, 60 minutes, end of song, turn off; the pill shows the time left |
-| **Lyrics** | 🔜 | Approved in mockups |
+| **Lyrics** | ✅ | Form sheet from the Now Playing header (quote bubble, filled when the song has lyrics): empty state with Add lyrics; editor with Save (primary), Cancel and Delete lyrics; plain lyrics in 20 pt text; synced lyrics in 30 pt serif lines — current line purple, past lines dimmed, tap a line to jump |
 | **Album, Delete confirmation, To review** | 🔜 | Approved in mockups |
 
 ## 9. Naming glossary (UI copy)
