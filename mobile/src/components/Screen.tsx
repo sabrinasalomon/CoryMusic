@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { usePlayer } from '../state/PlayerProvider';
 import { colors, layout, spacing, type } from '../theme/tokens';
 import { AmbientGlow } from './AmbientGlow';
 
@@ -14,6 +15,8 @@ type ScreenProps = {
 
 export function Screen({ title, overline, headerAccessory, children }: ScreenProps) {
   const insets = useSafeAreaInsets();
+  const { currentTrack } = usePlayer();
+  const bottomClearance = layout.tabBarClearance + (currentTrack ? layout.miniPlayerClearance : 0);
 
   return (
     <View style={styles.root}>
@@ -23,7 +26,7 @@ export function Screen({ title, overline, headerAccessory, children }: ScreenPro
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={[
           styles.content,
-          { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + layout.tabBarClearance },
+          { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + bottomClearance },
         ]}
       >
         <View style={styles.header}>

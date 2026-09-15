@@ -2,12 +2,15 @@ import { Redirect } from 'expo-router';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useTranslation } from 'react-i18next';
 
+import { MiniPlayer } from '../../src/components/MiniPlayer';
+import { usePlayer } from '../../src/state/PlayerProvider';
 import { useProfile } from '../../src/state/ProfileProvider';
 import { colors } from '../../src/theme/tokens';
 
 export default function TabsLayout() {
   const { t } = useTranslation();
   const { onboardingDone } = useProfile();
+  const { currentTrack } = usePlayer();
 
   if (!onboardingDone) {
     return <Redirect href="/welcome" />;
@@ -20,6 +23,11 @@ export default function TabsLayout() {
       iconColor={{ default: colors.textSecondary, selected: colors.accent }}
       labelStyle={{ default: { color: colors.textSecondary }, selected: { color: colors.accent } }}
     >
+      {currentTrack ? (
+        <NativeTabs.BottomAccessory>
+          <MiniPlayer />
+        </NativeTabs.BottomAccessory>
+      ) : null}
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />
         <NativeTabs.Trigger.Label>{t('tabs.home')}</NativeTabs.Trigger.Label>

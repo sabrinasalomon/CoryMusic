@@ -84,7 +84,7 @@ export default function HomeScreen() {
           </View>
           <View style={[styles.group, styles.listGroup]}>
             {recent.map((track, index) => (
-              <TrackRow key={track.id} track={track} last={index === recent.length - 1} />
+              <TrackRow key={track.id} track={track} last={index === recent.length - 1} queue={tracks} source={t('home.recentTitle')} />
             ))}
           </View>
         </View>

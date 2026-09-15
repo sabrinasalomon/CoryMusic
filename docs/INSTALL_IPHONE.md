@@ -10,7 +10,7 @@ It uses a free Apple ID. The only catch: apps signed this way **expire after 7 d
 |---|---|---|
 | Works with the computer turned off | ❌ | ✅ |
 | Music keeps playing with the iPhone locked | ❌ | ✅ |
-| Song title and artist on the Lock Screen | ❌ | ✅ |
+| Song on the Lock Screen with play or pause, position and 10-second skips | ❌ | ✅ |
 | Songs, playlists, favorites and profile saved | ✅ | ✅ |
 
 ## 1. Requirements
@@ -83,7 +83,7 @@ The first time, the iPhone may block the app:
 
 1. Stop any Expo server on the computer and turn off Wi-Fi on the Mac if you want to be sure.
 2. Open **CoryMusic** from the Home Screen.
-3. Play a song, lock the iPhone: the music keeps playing and the song appears on the Lock Screen.
+3. Play a song, lock the iPhone: the music keeps playing, the queue continues with the next song, and the Lock Screen shows the song with play or pause, position and 10-second skips.
 
 ## 8. Bring your music and playlists into the installed app
 

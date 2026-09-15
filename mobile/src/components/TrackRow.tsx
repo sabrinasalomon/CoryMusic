@@ -8,7 +8,14 @@ import { useLibrary } from '../state/LibraryProvider';
 import { usePlayer } from '../state/PlayerProvider';
 import { colors, radius, spacing, type } from '../theme/tokens';
 
-export function TrackRow({ track, last }: { track: Track; last?: boolean }) {
+type TrackRowProps = {
+  track: Track;
+  last?: boolean;
+  queue?: Track[];
+  source?: string;
+};
+
+export function TrackRow({ track, last, queue, source }: TrackRowProps) {
   const { t } = useTranslation();
   const { currentTrackId, isPlaying, toggle } = usePlayer();
   const { toggleFavorite } = useLibrary();
@@ -19,7 +26,7 @@ export function TrackRow({ track, last }: { track: Track; last?: boolean }) {
     <Pressable
       onPress={() => {
         Haptics.selectionAsync();
-        toggle(track);
+        toggle(track, queue, source);
       }}
       accessibilityRole="button"
       accessibilityLabel={`${track.title}, ${track.artist ?? t('common.unknownArtist')}`}

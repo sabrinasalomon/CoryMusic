@@ -94,6 +94,7 @@ One filled primary button per screen; everything else is glass, outlined or text
 |---|---|
 | Tab bar | `NativeTabs` from `expo-router/unstable-native-tabs` — the real iOS 26 floating tab bar, minimizes on scroll |
 | Search | Separate search-role tab |
+| Mini player | `NativeTabs.BottomAccessory` — sits on the tab bar's glass while a song is loaded |
 | Icon buttons (settings, close, add, back, edit) | `GlassView` from `expo-glass-effect` with a subtle purple tint; plain surface fallback when glass isn't available |
 | Content | Never glass — cards and lists stay on pure black |
 
@@ -104,6 +105,10 @@ One filled primary button per screen; everything else is glass, outlined or text
 | Screen | `src/components/Screen.tsx` | Ambient glow, overline, large serif title, header accessory |
 | Glass icon button | `src/components/GlassIconButton.tsx` | SF Symbol, haptic tick |
 | Primary button | `src/components/PrimaryButton.tsx` | Purple capsule with glow and light impact haptic |
+| Secondary button | `src/components/SecondaryButton.tsx` | Outlined capsule with purple label, next to a primary button |
+| Artwork | `src/components/Artwork.tsx` | Purple-to-black gradient with a music note, or a waveform while playing |
+| Scrubber | `src/components/Scrubber.tsx` | 4 pt track, purple fill, thumb that grows while dragging, tabular times |
+| Mini player | `src/components/MiniPlayer.tsx` | Tab bar accessory content with regular and compact layouts |
 | Empty state | `src/components/EmptyState.tsx` | Monogram or symbol, serif title, action |
 | Track row | `src/components/TrackRow.tsx` | Artwork placeholder, title, artist, heart, play or pause |
 | Folder card | `src/components/FolderCard.tsx` | Music folder name, last sync, Sync and Change |
@@ -121,7 +126,9 @@ Icons are **SF Symbols** through `expo-symbols`.
 | Import or sync with new songs | Success haptic |
 | Pressed buttons | Slight scale down |
 | Playing song | Waveform symbol and purple title |
-| Sheets (Settings, Profile, rule editor) | Native form sheets with grabber |
+| Now Playing artwork | Springs to full size when playing, slightly smaller when paused |
+| Now Playing | Native modal, swipe down to close |
+| Sheets (Settings, Profile, rule editor, Backup, Queue) | Native form sheets with grabber |
 
 ## 8. Screens
 
@@ -137,7 +144,11 @@ Icons are **SF Symbols** through `expo-symbols`.
 | **Settings** | ✅ | Profile card, music folder, library, playback, backup, privacy, version |
 | **Backup** | ✅ | Status card (amber reminder after 7 days without saving outside the app), Save backup (primary), Restore from file, what's saved, weekly automatic switch, automatic backups list, pending songs |
 | **Search** | 🟡 Layout | Search field and library shortcuts; results are planned |
-| **Now Playing, Queue, Lyrics, Sleep timer** | 🔜 | Approved in mockups |
+| **Now Playing** | ✅ | Modal with "Now playing" and "Playing from" header, large gradient artwork that shrinks on pause, title, artist, heart, draggable progress bar with elapsed and remaining time, shuffle · previous · play (primary) · next · repeat, Sleep timer and Queue pills |
+| **Mini player** | ✅ | Tab bar accessory: artwork, title, artist, play or pause, next; only title and play when the tab bar minimizes |
+| **Queue** | ✅ | Form sheet: now playing card, Up next list, tap to jump, minus button to remove |
+| **Sleep timer** | ✅ | Native action sheet: 15, 30, 45, 60 minutes, end of song, turn off; the pill shows the time left |
+| **Lyrics** | 🔜 | Approved in mockups |
 | **Album, Delete confirmation, To review** | 🔜 | Approved in mockups |
 
 ## 9. Naming glossary (UI copy)

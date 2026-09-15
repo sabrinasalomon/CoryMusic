@@ -61,18 +61,19 @@
 | **Import** | Pick songs from the Files app (MP3, M4A, AAC, WAV, AIFF, FLAC); duplicates are skipped and `.ogg` files are flagged |
 | **Music folder** | Choose a folder such as OneDrive › Music and sync new songs, including subfolders; change or forget it anytime |
 | **Library** | Songs and artists, artist and title read from the file name |
-| **Playback** | Tap a song to play or pause, mark favorites with a heart; plays are counted after half the song |
+| **Now Playing** | Full-screen player with a draggable progress bar, next, previous, shuffle, repeat, queue and sleep timer; mini player above the tab bar; Play and Shuffle for your library and smart playlists |
+| **Favorites and plays** | Mark favorites with a heart; plays are counted after half the song |
 | **Smart playlists** | Rules by artist, title, import date, plays, last played and favorite; match all or any; sort, limit and live preview; four one-tap suggestions |
 | **Profile** | Photo from your gallery, name, in-app language (System, Español, English) and library stats |
 | **Backup** | Save a backup to Files or OneDrive, automatic weekly backups on the iPhone (keeps 5), restore playlists, favorites, plays and profile; songs not imported yet get their data back later |
-| **Installed app** | Install the Release app on your own iPhone to use it without a computer, with background audio and Lock Screen details — see [Install on iPhone](docs/INSTALL_IPHONE.md) |
+| **Installed app** | Install the Release app on your own iPhone to use it without a computer, with background audio and Lock Screen controls — see [Install on iPhone](docs/INSTALL_IPHONE.md) |
 | **Design** | Native iOS 26 tab bar with Liquid Glass, SF Symbols, haptics, English and Spanish |
 
 ### Coming next
 
 | Area | Planned |
 |---|---|
-| **Now Playing** | Full-screen player, queue, shuffle, repeat, sleep timer |
+| **Playback** | Lyrics and a fade-out when the sleep timer ends |
 | **Metadata** | Albums and artwork from file tags, review queue, on-device suggestions |
 | **Library** | Album pages, search results, normal playlists, delete with confirmation |
 | **Entrada folder** | Automatic import from CoryMusic's own folder in Files |
@@ -103,7 +104,7 @@ Pure black background, purple accents, serif titles and Apple's Liquid Glass on 
 | Look and feel | expo-glass-effect · expo-symbols (SF Symbols) · expo-linear-gradient · expo-haptics |
 | Data | expo-sqlite (library and smart playlists) · SQLite key-value store (profile and settings) |
 | Files | expo-file-system · expo-document-picker · expo-image-picker · expo-sharing |
-| Audio | expo-audio (background playback in the installed app) |
+| Audio | expo-audio (queue, background playback and Lock Screen controls in the installed app) |
 | Languages | i18next · expo-localization — English and Spanish |
 | Network | None |
 
@@ -135,7 +136,7 @@ CoryMusic/
 │   └── screenshots/          # App screens used in this README
 ├── docs/                     # Documentation and diagrams
 ├── mobile/                   # The Expo app
-│   ├── app/                  # Screens (Expo Router): tabs, welcome, profile, settings, backup, smart playlists
+│   ├── app/                  # Screens (Expo Router): tabs, welcome, now playing, queue, profile, settings, backup, smart playlists
 │   ├── assets/               # App icon
 │   └── src/
 │       ├── backup/           # Backup format, save, share and restore

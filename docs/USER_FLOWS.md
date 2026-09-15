@@ -18,6 +18,10 @@ flowchart LR
         T4[Search]
     end
 
+    Tabs --> Mini[Mini player]
+    Mini --> Player[Now Playing]
+    Player --> Queue[Queue]
+
     T1 --> Profile[Profile]
     T1 --> Settings[Settings]
     Settings --> Profile
@@ -117,7 +121,30 @@ flowchart TD
     C & F --> G[Smart playlists re-evaluate]
 ```
 
-## 7. Backup and restore
+## 7. Now Playing
+
+```mermaid
+flowchart TD
+    A[Tap a song, Play or Shuffle] --> B[Queue from that list - Playing from its name]
+    B --> C[Mini player above the tab bar]
+    C -- Tap --> D[Now Playing]
+    D --> E{Action}
+    E -- Drag the bar --> F[Jump to that position]
+    E -- Next or previous --> G[Change song - previous restarts after 3 seconds]
+    E -- Shuffle --> H[Current song first, the rest shuffled]
+    E -- Repeat --> I[Off, all, this song]
+    E -- Sleep timer --> J[15, 30, 45, 60 minutes or end of song]
+    E -- Queue --> K[Jump to a song or remove it]
+    J --> L[Playback pauses when the time is up]
+
+    B --> M{Song ends}
+    M -- Repeat this song --> N[Play it again]
+    M -- More songs in the queue --> O[Next song]
+    M -- End of queue with repeat all --> P[Back to the first song]
+    M -- End of queue --> Q[Stop]
+```
+
+## 8. Backup and restore
 
 ```mermaid
 flowchart TD
@@ -143,11 +170,11 @@ flowchart TD
     S{No backup saved outside the app in 7 days?} -- Yes --> T[Amber reminder on the Backup screen]
 ```
 
-## 8. Planned flows
+## 9. Planned flows
 
 | Flow | Summary |
 |---|---|
-| Now Playing | Full-screen player with queue, shuffle, repeat and sleep timer |
+| Lyrics | Write or paste lyrics and read them from Now Playing |
 | Delete a song | Confirmation, then remove from library, playlists and storage |
 | To review | Complete missing song data with suggestions |
 | Entrada folder | Automatic import from CoryMusic's own folder in Files |

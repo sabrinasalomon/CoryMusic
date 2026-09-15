@@ -6,10 +6,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { EmptyState } from '../../src/components/EmptyState';
 import { FolderCard } from '../../src/components/FolderCard';
 import { GlassIconButton } from '../../src/components/GlassIconButton';
+import { PrimaryButton } from '../../src/components/PrimaryButton';
 import { Screen } from '../../src/components/Screen';
+import { SecondaryButton } from '../../src/components/SecondaryButton';
 import { SymbolBadge } from '../../src/components/SymbolBadge';
 import { TrackRow } from '../../src/components/TrackRow';
 import { useLibrary } from '../../src/state/LibraryProvider';
+import { usePlayer } from '../../src/state/PlayerProvider';
 import { colors, radius, spacing, type } from '../../src/theme/tokens';
 
 type Segment = 'songs' | 'artists' | 'albums';
@@ -18,6 +21,7 @@ const SEGMENTS: Segment[] = ['songs', 'artists', 'albums'];
 export default function LibraryScreen() {
   const { t } = useTranslation();
   const { tracks, artists, importMusic } = useLibrary();
+  const { playTracks } = usePlayer();
   const [segment, setSegment] = useState<Segment>('songs');
 
   const select = (item: Segment) => {
@@ -62,11 +66,21 @@ export default function LibraryScreen() {
           </View>
 
           {segment === 'songs' ? (
-            <View style={styles.group}>
-              {tracks.map((track, index) => (
-                <TrackRow key={track.id} track={track} last={index === tracks.length - 1} />
-              ))}
-            </View>
+            <>
+              <View style={styles.playRow}>
+                <View style={styles.flex}>
+                  <PrimaryButton label={t('player.playAll')} symbol="play.fill" onPress={() => playTracks(tracks, 0, { source: t('library.title') })} />
+                </View>
+                <View style={styles.flex}>
+                  <SecondaryButton label={t('player.shuffleAll')} symbol="shuffle" onPress={() => playTracks(tracks, 0, { source: t('library.title'), shuffle: true })} />
+                </View>
+              </View>
+              <View style={styles.group}>
+                {tracks.map((track, index) => (
+                  <TrackRow key={track.id} track={track} last={index === tracks.length - 1} queue={tracks} source={t('library.title')} />
+                ))}
+              </View>
+            </>
           ) : null}
 
           {segment === 'artists' ? (
@@ -124,6 +138,13 @@ const styles = StyleSheet.create({
   segmentTextSelected: {
     color: colors.accent,
     fontWeight: '600',
+  },
+  playRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  flex: {
+    flex: 1,
   },
   group: {
     overflow: 'hidden',

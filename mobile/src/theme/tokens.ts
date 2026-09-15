@@ -63,4 +63,5 @@ export const spacing = {
 export const layout = {
   screenPadding: 20,
   tabBarClearance: 110,
+  miniPlayerClearance: 64,
 } as const;

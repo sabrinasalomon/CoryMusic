@@ -6,6 +6,7 @@ import { EmptyState } from '../../src/components/EmptyState';
 import { GlassIconButton } from '../../src/components/GlassIconButton';
 import { PrimaryButton } from '../../src/components/PrimaryButton';
 import { Screen } from '../../src/components/Screen';
+import { SecondaryButton } from '../../src/components/SecondaryButton';
 import { TrackRow } from '../../src/components/TrackRow';
 import { describeRule, evaluateSmartPlaylist } from '../../src/smart/rules';
 import { useLibrary } from '../../src/state/LibraryProvider';
@@ -17,7 +18,7 @@ export default function SmartPlaylistScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { tracks, smartPlaylists } = useLibrary();
-  const { toggle } = usePlayer();
+  const { playTracks } = usePlayer();
 
   const playlist = smartPlaylists.find((item) => String(item.id) === id);
 
@@ -56,10 +57,17 @@ export default function SmartPlaylistScreen() {
         <EmptyState symbol="sparkles" title={t('smart.emptyTitle')} body={t('smart.emptyBody')} actionLabel={t('smart.edit')} actionSymbol="slider.horizontal.3" onAction={openEditor} />
       ) : (
         <>
-          <PrimaryButton label={t('smart.play')} symbol="play.fill" onPress={() => toggle(songs[0])} />
+          <View style={styles.playRow}>
+            <View style={styles.flex}>
+              <PrimaryButton label={t('smart.play')} symbol="play.fill" onPress={() => playTracks(songs, 0, { source: playlist.name })} />
+            </View>
+            <View style={styles.flex}>
+              <SecondaryButton label={t('player.shuffleAll')} symbol="shuffle" onPress={() => playTracks(songs, 0, { source: playlist.name, shuffle: true })} />
+            </View>
+          </View>
           <View style={styles.group}>
             {songs.map((track, index) => (
-              <TrackRow key={track.id} track={track} last={index === songs.length - 1} />
+              <TrackRow key={track.id} track={track} last={index === songs.length - 1} queue={songs} source={playlist.name} />
             ))}
           </View>
         </>
@@ -76,6 +84,13 @@ const styles = StyleSheet.create({
   rules: {
     gap: spacing.xs,
     marginTop: -spacing.lg,
+  },
+  playRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  flex: {
+    flex: 1,
   },
   group: {
     overflow: 'hidden',

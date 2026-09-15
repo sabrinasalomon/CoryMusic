@@ -12,6 +12,7 @@ Pace: about **24 hours per week**. Dates for upcoming phases are estimates.
 | **v0.3 Smart playlists** | Rules engine, editor with live preview, detail screen, four suggestions, favorites, play counting | ✅ |
 | **v0.4 Music folder** | Choose, sync, change and forget a music folder, including subfolders | ✅ |
 | **v0.5 Backup & installed app** | Save and restore backups, weekly automatic backups, pending songs; background audio and Lock Screen details for the installed app; install guide | ✅ |
+| **v0.6 Now Playing** | Full-screen player, mini player, queue, shuffle, repeat, sleep timer, Play and Shuffle buttons, Lock Screen controls | ✅ |
 
 ## Next
 
@@ -21,12 +22,8 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %b %d
 
-    section Playback
-    Now Playing screen and queue           :p1, 2026-09-21, 5d
-    Shuffle, repeat and sleep timer        :p2, after p1, 3d
-
     section Library
-    File tags, albums and artwork          :l1, after p2, 5d
+    File tags, albums and artwork          :l1, 2026-09-21, 5d
     To review queue and editing            :l2, after l1, 4d
     Search                                 :l3, after l2, 3d
     Delete with confirmation               :l4, after l3, 1d
@@ -44,7 +41,6 @@ gantt
 
 | Version | Scope |
 |---|---|
-| **v0.6** | Now Playing, queue, shuffle, repeat, sleep timer |
 | **v0.7** | Albums and artwork from tags, To review, search, delete |
 | **v0.8** | Normal playlists, pinned playlist |
 | **v0.9** | Protected storage for imported songs and the automatic Entrada folder |

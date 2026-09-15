@@ -15,6 +15,8 @@ flowchart TB
         P[profile.tsx]
         S[settings.tsx]
         B[backup.tsx]
+        NP[player.tsx]
+        QU[queue.tsx]
         SD["smart/[id].tsx"]
         SE[smart/edit.tsx]
     end
@@ -49,7 +51,7 @@ flowchart TB
     W & P --> PP
     T1 & T2 & T3 & SD & SE --> LP
     B & S --> BP
-    T1 & T2 & SD --> PL
+    T1 & T2 & SD & NP & QU --> PL
 
     PP --> KV
     PP --> FI
@@ -84,7 +86,7 @@ Providers are nested in this order: `ProfileProvider` → `LibraryProvider` → 
 | **ProfileProvider** | Name, photo, language preference, onboarding flag | `setName`, `setPhoto`, `removePhoto`, `setLanguage`, `completeOnboarding` |
 | **LibraryProvider** | Tracks, artists, storage used, smart playlists, music folder, sync state | `importMusic`, `syncMusicFolder`, `chooseMusicFolder`, `forgetMusicFolder`, `toggleFavorite`, `recordPlay`, `saveSmartPlaylist`, `deleteSmartPlaylist`, `reload` |
 | **BackupProvider** | Automatic backups on the iPhone, last saved backup, weekly setting, pending songs | `saveBackup`, `restoreFromFile`, `restoreSnapshot`, `setAutoWeekly`; creates the weekly automatic backup on launch |
-| **PlayerProvider** | Current track and play state | `toggle(track)`; records a play after 50% listened; shows the song on the Lock Screen |
+| **PlayerProvider** | Queue, current track, play state, source, shuffle, repeat, sleep timer | `playTracks`, `toggle`, `togglePlayPause`, `next`, `previous`, `seekTo`, `playQueueIndex`, `removeFromQueue`, `toggleShuffle`, `cycleRepeat`, `setSleepTimer`; continues with the queue when a song ends; records a play after 50% listened; shows the song on the Lock Screen |
 
 ## 3. Modules
 
@@ -97,6 +99,8 @@ Providers are nested in this order: `ProfileProvider` → `LibraryProvider` → 
 | `smart/rules.ts` | Rule types, allowed conditions per field, validation, evaluation, sorting, presets, rule descriptions |
 | `backup/format.ts` | Backup schema (version 1) and strict parsing of backup files |
 | `backup/service.ts` | Builds a backup, writes automatic backups (keeps 5), shares a backup file, reads backup files, restores library data |
+| `components/MiniPlayer.tsx` | Mini player in the tab bar accessory: current song, play or pause, next |
+| `components/Scrubber.tsx` | Draggable progress bar with elapsed and remaining time, adjustable with VoiceOver |
 | `storage/kv.ts` | Typed keys over the SQLite key-value store |
 | `i18n` | i18next setup with English and Spanish resources and the saved language preference |
 | `theme/tokens.ts` | Colors, typography, radius, spacing |
@@ -183,19 +187,20 @@ sequenceDiagram
     BP-->>U: restore report
 ```
 
-## 7. Sequence — playback and smart playlists
+## 7. Sequence — playback, queue and smart playlists
 
 ```mermaid
 sequenceDiagram
     actor U as User
-    participant R as TrackRow
+    participant R as Song row or Play button
     participant PL as PlayerProvider
     participant A as expo-audio
     participant LP as LibraryProvider
     participant RU as rules.ts
 
-    U->>R: tap song
-    R->>PL: toggle(track)
+    U->>R: tap a song, Play or Shuffle
+    R->>PL: playTracks(list, start, source)
+    PL->>PL: build the queue, shuffled if needed
     PL->>A: replace source, play, Lock Screen details
     A-->>PL: status updates
     PL->>PL: 50% of duration reached?
@@ -203,7 +208,19 @@ sequenceDiagram
     LP->>LP: reload tracks
     LP->>RU: evaluate each smart playlist
     RU-->>U: lists update automatically
+    A-->>PL: song finished
+    alt sleep timer set to end of song
+        PL->>A: stop at the start of the song
+    else repeat this song
+        PL->>A: seek to start and play
+    else more songs in the queue, or repeat all
+        PL->>A: load the next song
+    else end of the queue
+        PL->>A: stop at the start of the song
+    end
 ```
+
+The queue keeps track ids in memory and resolves them from the library, so titles and hearts are always current. It starts empty each time the app opens.
 
 ## 8. Key technical decisions
 
@@ -217,6 +234,9 @@ sequenceDiagram
 | Settings | SQLite key-value store | Simple synchronous reads at startup |
 | Audio files | Copied into the app's documents folder | Always available offline, independent of the source |
 | Smart playlists | Evaluated in memory from rules | Small libraries, always up to date, no stored results |
+| Mini player | `NativeTabs.BottomAccessory` | The iOS 26 tab bar accessory, with Liquid Glass and a compact version when the bar minimizes |
+| Lock Screen | Audio session `doNotMix`; play or pause, position and 10-second skips | expo-audio requires `doNotMix` for Lock Screen controls and doesn't offer next or previous commands |
+| Sleep timer | Timeout plus a check on every playback update | Stops on time even if timers are delayed in the background |
 | Backups outside the app | Saved by the user through the share sheet, with a weekly reminder | iOS doesn't let apps keep writing to an external folder |
 | Automatic backups | Inside the app, weekly, 5 kept | Protect against mistakes and failed updates without user action |
 | Personal use | Release build installed from a Mac with a free Apple ID | Works without a computer; re-install every 7 days keeps data |
@@ -227,7 +247,7 @@ sequenceDiagram
 | Feature | In Expo Go | In the installed app |
 |---|---|---|
 | Works without the computer | Not available | Available |
-| Background audio and Lock Screen details | Not available | Available (`enableBackgroundPlayback`) |
+| Background audio and Lock Screen controls | Not available | Available (`enableBackgroundPlayback`, `doNotMix`) |
 | *Entrada* folder visible in Files | Not available | Planned |
 | Remembering folder access across launches | Not available | Not available (would need a custom native module) |
 

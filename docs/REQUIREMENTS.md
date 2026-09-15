@@ -13,7 +13,7 @@
 ### For the installed app (later)
 | Item | Why |
 |---|---|
-| **Mac with Xcode** (MacBook Neo) | Build a development build to unlock background audio, Lock Screen controls and the *Entrada* folder |
+| **Mac with Xcode** (MacBook Neo) | Build and install the Release app, which works without a computer and unlocks background audio and Lock Screen controls — see [INSTALL_IPHONE.md](INSTALL_IPHONE.md) |
 | **Apple ID** | Free signing for your own iPhone; apps expire every 7 days and must be re-installed (data is kept) |
 
 ### Software (all free)
@@ -89,14 +89,16 @@
 ### Playback
 | ID | Requirement | Priority | Status |
 |---|---|---|---|
-| FR-20 | Play and pause a song from any list | Must | ✅ |
+| FR-20 | Play a song from any list, with the rest of that list as the queue; Play and Shuffle buttons in Library and smart playlists | Must | ✅ |
 | FR-19 | Mark songs as favorites | Must | ✅ |
 | FR-28 | Count a play when more than half of the song has been heard | Must | ✅ |
-| FR-20b | Full Now Playing screen: next, previous, seek | Must | 🔜 |
-| FR-21 | Shuffle and repeat | Must | 🔜 |
-| FR-22 | Queue | Must | 🔜 |
-| FR-23 | Background playback and song details on the Lock Screen | Must | 🧪 configured, works in the installed app |
-| FR-25 | Sleep timer with fade-out | Should | 🔜 |
+| FR-20b | Full Now Playing screen: play or pause, next, previous (restarts the song after 3 seconds), draggable progress bar, favorite | Must | ✅ |
+| FR-58 | Mini player above the tab bar that opens Now Playing | Must | ✅ |
+| FR-21 | Shuffle (current song first, the rest shuffled) and repeat (off, all, this song) | Must | ✅ |
+| FR-22 | Queue: see what's up next, jump to a song, remove songs | Must | ✅ |
+| FR-23 | Background playback and Lock Screen controls: play or pause, position and 10-second skips | Must | 🧪 configured, works in the installed app |
+| FR-25 | Sleep timer: 15, 30, 45 or 60 minutes, or at the end of the song | Should | ✅ |
+| FR-59 | Fade-out when the sleep timer ends | Could | 🔜 |
 | FR-27 | Lyrics written or pasted by the user | Could | 🔜 |
 | FR-51 | Continue with similar songs when the queue ends | Should | 🔜 |
 

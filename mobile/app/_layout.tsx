@@ -39,6 +39,8 @@ export default function RootLayout() {
                 <Stack.Screen name="settings" options={{ presentation: 'formSheet', sheetGrabberVisible: true }} />
                 <Stack.Screen name="profile" options={{ presentation: 'formSheet', sheetGrabberVisible: true }} />
                 <Stack.Screen name="backup" options={{ presentation: 'formSheet', sheetGrabberVisible: true, sheetAllowedDetents: [1] }} />
+                <Stack.Screen name="player" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="queue" options={{ presentation: 'formSheet', sheetGrabberVisible: true, sheetAllowedDetents: [0.75, 1] }} />
               </Stack>
             </PlayerProvider>
           </BackupProvider>
