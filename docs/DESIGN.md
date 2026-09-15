@@ -1,8 +1,15 @@
 # Design
 
-CoryMusic should feel **premium, calm and nocturnal**: pure black, purple light, elegant serif titles and Apple's native Liquid Glass on the floating controls.
+CoryMusic should feel **premium, calm and nocturnal**: pure black, purple light, elegant serif titles and Apple's Liquid Glass on the floating controls.
 
-> The layout takes common music-app patterns (large artwork rows, floating mini player) and gives them an original identity. No screens, artwork or branding from other apps are copied.
+> The layout takes common music-app patterns (large lists, floating tab bar) and gives them an original identity. No screens, artwork or branding from other apps are copied.
+
+<p align="center">
+  <img src="../design/screenshots/home.png" width="22%" alt="Home">
+  <img src="../design/screenshots/library.png" width="22%" alt="Library">
+  <img src="../design/screenshots/smart-playlist.png" width="22%" alt="Smart playlist editor">
+  <img src="../design/screenshots/profile.png" width="22%" alt="Profile">
+</p>
 
 ## 1. Brand
 
@@ -11,145 +18,138 @@ CoryMusic should feel **premium, calm and nocturnal**: pure black, purple light,
 - **Personality:** elegant, private, nocturnal, personal.
 - **Usage and license:** see [BRAND.md](../BRAND.md).
 
-### App icon (built)
+### App icon
 
 | Item | Detail |
 |---|---|
-| File | `design/icon/CoryMusic.icon` (Icon Composer package) |
-| Background | Solid `#000000` fill defined in `icon.json` |
-| Layer group "M" (front) | `cm-m.svg`, `#A98BFF`, glass, specular, chromatic shadow 0.5, translucency 0.2 |
-| Layer group "C" (back) | `cm-c.svg`, `#8B5CF6`, glass, specular, chromatic shadow 0.35, translucency 0.2 |
-| Tinted appearance | White mono layers `cm-c-mono.svg`, `cm-m-mono.svg` |
-| Monogram size | ~72% of the canvas width, centered, no drawn rounded frame |
+| Layered icon | `design/icon/CoryMusic.icon` (Icon Composer package for the installed app) |
+| Expo icon | `mobile/assets/icon.png` — flat 1024 × 1024 export |
+| Background | Solid `#000000` |
+| Layers | "M" in front (`#A98BFF`), "C" behind (`#8B5CF6`), white mono versions for tinted appearance |
 | Letterforms | Outlines from Cormorant Garamond SemiBold (SIL OFL 1.1) |
-| Flat export | `design/icon/export/AppIcon-1024.png` |
-| Final check | Open the `.icon` in Icon Composer on the Mac and review Default, Dark, Clear and Tinted |
 
 ## 2. Color
 
-The app always uses **dark appearance** (`.preferredColorScheme(.dark)`).
+The app always uses **dark appearance** (`userInterfaceStyle: "dark"`). Tokens live in `mobile/src/theme/tokens.ts`.
 
-| Token | Hex | Use |
+| Token | Value | Use |
 |---|---|---|
 | `background` | `#000000` | Every screen background (true black on OLED) |
-| `surfaceSubtle` | `#07040F` | Cards and tiles that need a hint of separation |
-| `hairline` | `#2A1F45` | 0.5 pt separators and borders |
-| `borderStrong` | `#3B2B66` | Inactive chips, placeholders |
-| `accent` | `#A98BFF` | Titles, active icons, selected states, highlighted search matches |
-| `primaryFill` | `#7C3AED` | The single filled primary button per screen (white label) |
-| `primaryFillPressed` | `#6D28D9` | Pressed state |
-| `textPrimary` | `#E6DEFA` | Body text |
-| `textSecondary` | `#8A82A3` | Metadata, captions |
-| `warning` | `#C9A24A` | Incomplete-data indicator only |
-| `danger` | `#FF8A8A` | Destructive actions (delete) only |
-| `glassTint` | `#7C3AED` at low opacity | Tint for Liquid Glass surfaces |
+| `surface` | `#07040F` | Cards and grouped lists |
+| `surfaceRaised` | `#0E0820` | Inputs, chips, segmented controls |
+| `surfaceHighlight` | `#1A1030` | Selected segment, gradient tops |
+| `hairline` | `#2A1F45` | Separators and card borders |
+| `borderStrong` | `#3B2B66` | Chips, inputs, badges |
+| `accent` | `#A98BFF` | Titles, active icons, selected states |
+| `accentSoft` | `rgba(169,139,255,0.16)` | Icon badges, selected chips |
+| `primary` | `#7C3AED` | The single filled primary button per screen (white label) |
+| `primaryPressed` | `#6D28D9` | Pressed state |
+| `text` | `#E6DEFA` | Body text |
+| `textSecondary` | `#8A82A3` | Metadata and captions |
+| `textTertiary` | `#5E5775` | Placeholders and inactive hearts |
+| `danger` | `#FF8A8A` | Destructive actions and input errors |
+| `glassTint` | `rgba(124,58,237,0.14)` | Tint for glass buttons |
+| Ambient glow | `rgba(124,58,237,0.22)` → transparent | Soft purple light at the top of each screen |
 
 ### Contrast (WCAG)
 | Pair | Ratio |
 |---|---|
-| `textPrimary` on black | 16.19:1 |
+| `text` on black | 16.19:1 |
 | `accent` on black | 7.82:1 |
 | `textSecondary` on black | 5.80:1 |
-| White on `primaryFill` | 5.70:1 |
-| `warning` on black | 8.75:1 |
-
-`#8B5CF6` is used only as a graphic color (icon), never behind text: white on it is 4.23:1.
-Artwork on black gets a **0.5 pt `hairline` border** so dark covers don't disappear.
+| White on `primary` | 5.70:1 |
+| `danger` on black | 9.25:1 |
 
 ## 3. Typography
 
-| Role | Font | Example |
+| Role | Font | Size |
 |---|---|---|
-| Large titles, artist and playlist names, section headers | **New York** (`.fontDesign(.serif)`) | "Your collection", "Artist Name" |
-| Body, lists, buttons | **SF Pro** (system) | Song rows, controls |
-| Overlines | SF Pro, wide letter spacing, `textSecondary` | "FAVORITE ARTIST" |
-| File names | SF Mono | `track_07.mp3` |
+| Large titles | Cormorant Garamond SemiBold (`@expo-google-fonts/cormorant-garamond`) | 44 / 48 |
+| Sheet and card titles | Cormorant Garamond SemiBold | 30 / 34 |
+| Section titles | Cormorant Garamond SemiBold | 24 / 28 |
+| Headline | System font (SF Pro), semibold | 17 |
+| Body | System font | 16 / 22 |
+| Subhead and captions | System font | 15 and 13 |
+| Overlines | System font, semibold, letter spacing 2, uppercase | 12 |
 
-All text supports **Dynamic Type**. Spanish strings run ~20% longer than English — layouts must wrap, not truncate, titles.
+Spanish strings run longer than English — titles wrap instead of truncating.
 
 ## 4. Shape & spacing
 
-| Element | Corner radius |
+| Element | Value |
 |---|---|
-| Album / song artwork | 4 pt |
-| Cards and tiles | 6–12 pt |
-| Glass controls | Capsule / circle |
-| Artist images | Circle |
+| Song artwork placeholder | 6 pt radius |
+| Inputs | 12 pt radius |
+| Cards and grouped lists | 20 pt radius |
+| Buttons, chips, segmented controls | Capsule |
+| Avatars and glass icon buttons | Circle |
+| Screen padding | 20 pt |
+| Spacing scale | 4 · 8 · 12 · 16 · 24 · 32 · 44 |
 
-Generous black space; one primary action per screen.
+One filled primary button per screen; everything else is glass, outlined or text.
 
-## 5. Liquid Glass rules
+## 5. Liquid Glass
 
-| Rule | Detail |
+| Where | Implementation |
 |---|---|
-| Glass only on the **navigation layer** | Tab bar, mini player, floating buttons over images, sheets |
-| **Never** glass on content | Artwork, rows, cards stay on pure black |
-| **No glass on glass** | Don't stack glass controls on glass sheets |
-| Purple tint | `.glassEffect(.regular.tint(...))` with a subtle `glassTint` |
-| Group nearby controls | `GlassEffectContainer` so shapes merge smoothly |
-| Buttons | `.buttonStyle(.glass)` for secondary, filled `primaryFill` for the single primary action |
+| Tab bar | `NativeTabs` from `expo-router/unstable-native-tabs` — the real iOS 26 floating tab bar, minimizes on scroll |
+| Search | Separate search-role tab |
+| Icon buttons (settings, close, add, back, edit) | `GlassView` from `expo-glass-effect` with a subtle purple tint; plain surface fallback when glass isn't available |
+| Content | Never glass — cards and lists stay on pure black |
 
-## 6. Navigation
+## 6. Components
 
-| Element | Implementation |
-|---|---|
-| Tab bar | `TabView` with **Home, Library, Playlists, Search** (search as a search-role tab) |
-| Mini player | `.tabViewBottomAccessory` |
-| Minimize on scroll | `.tabBarMinimizeBehavior(.onScrollDown)` |
-| Settings | Glass gear button on Home (not a tab) |
-| Artwork → detail | `.navigationTransition(.zoom)` |
+| Component | File | Notes |
+|---|---|---|
+| Screen | `src/components/Screen.tsx` | Ambient glow, overline, large serif title, header accessory |
+| Glass icon button | `src/components/GlassIconButton.tsx` | SF Symbol, haptic tick |
+| Primary button | `src/components/PrimaryButton.tsx` | Purple capsule with glow and light impact haptic |
+| Empty state | `src/components/EmptyState.tsx` | Monogram or symbol, serif title, action |
+| Track row | `src/components/TrackRow.tsx` | Artwork placeholder, title, artist, heart, play or pause |
+| Folder card | `src/components/FolderCard.tsx` | Music folder name, last sync, Sync and Change |
+| Chip | `src/components/Chip.tsx` | Rule fields, conditions, sort and limit |
+| Avatar | `src/components/Avatar.tsx` | Photo or initials on a purple gradient |
+| Symbol badge | `src/components/SymbolBadge.tsx` | SF Symbol on a soft purple square or circle |
+
+Icons are **SF Symbols** through `expo-symbols`.
 
 ## 7. Motion & feedback
 
 | Moment | Effect |
 |---|---|
-| Play / pause | SF Symbol replace transition; artwork scales down slightly when paused |
-| Now playing indicator | Animated audio bars |
-| Favorite, add to playlist, import finished | `.sensoryFeedback` light haptic (can be turned off) |
-| Sleep timer ends | Volume fades out over a few seconds |
-| Reduce Motion enabled | Replace scale/zoom with fades |
+| Buttons and chips | Selection or light impact haptic (`expo-haptics`) |
+| Import or sync with new songs | Success haptic |
+| Pressed buttons | Slight scale down |
+| Playing song | Waveform symbol and purple title |
+| Sheets (Settings, Profile, rule editor) | Native form sheets with grabber |
 
-## 8. Screens (approved mockups)
+## 8. Screens
 
-| Screen | Key elements |
-|---|---|
-| **Welcome** | CM mark, app name, "Get started"; name field with Skip; time-of-day greeting; import options |
-| **Home** | CM mark, greeting overline, "Your collection", continue listening, *Recently added*, *More from [Artist]* (most played in the last 7 days), *Made for you* |
-| **Artist** | Hero image with glass buttons, name in serif, play (primary) + shuffle (glass), *Latest*, *Most played*, *Discography* |
-| **Album** | Large artwork, title, artist, year, count, duration, play + shuffle, song list with delete |
-| **Delete confirmation** | Trash icon, song name, explanation (library, playlists and iPhone storage), *Delete anyway* (`danger`), *Cancel* (primary) |
-| **Now Playing** | Source overline, large artwork, serif title, favorite, thin progress bar, primary play button, shuffle/repeat, volume, lyrics, sleep timer, output, queue |
-| **Queue** | Now playing card with bars, *Added by you*, *From [source]*, reorder, remaining time |
-| **Lyrics** | Empty state with write/paste; edit mode; current line large in `accent`, others dimmed |
-| **Sleep timer** | Glass sheet: 15 / 30 / 60 min, end of song; countdown; turn off |
-| **Library** | Summary, glass segmented control (Artists / Albums / Songs), Entrada notice, sort and import buttons |
-| **Import** | Glass sheet: from Files, Entrada toggle, from Mac; progress with imported / duplicate / incomplete states |
-| **Review song** | Original file name, suggestion card (accept / ignore), data fields, apply to folder |
-| **To review** | Suggestions first, multi-select bulk edit, accept all |
-| **Playlists** | Pinned playlist, smart row, your playlists grid, create sheet (normal / smart, name, cover) |
-| **Playlist detail** | Cover, stats, primary play + glass shuffle, edit mode |
-| **Add songs** | Search, scopes (songs, albums, artists), + / ✓ toggles, counter in the confirm button |
-| **Rule editor** | Name, match all / any, rule rows, add rule, sort, limit, *Favorites only*, live preview |
-| **Search** | Bottom glass search field, recents, favorite artists, library shortcuts, scoped results with highlights |
-| **Settings** | Library (Entrada, To review, storage), Playback (default timer, continue with similar, haptics), Backup, About (privacy, version) |
-| **Backup** | Status shield, what is saved / not saved, weekly automatic backup, folder outside the app, *Back up now* (primary), *Restore* (glass), restore report |
-| **Empty states** | Library (CM mark + import), Playlists (create), Search (no results) |
+| Screen | Status | Key elements |
+|---|---|---|
+| **Welcome** | ✅ | CM mark, "Welcome to CoryMusic", name step with inline validation, time-of-day greeting, import or later |
+| **Home** | ✅ | Greeting with name, "Your collection", settings and profile buttons, Recently added, empty state with How it works |
+| **Library** | ✅ | Song count, add button, Music folder card, Songs / Artists / Albums segments |
+| **Playlists** | ✅ | Your smart playlists with live counts, one-tap suggestions |
+| **Smart playlist detail** | ✅ | Rules summary, Play, matching songs, Edit rules |
+| **Smart playlist editor** | ✅ | Name, match all / any, rule cards with chips, sort, limit, live preview, delete |
+| **Profile** | ✅ | Photo, name, language, stats |
+| **Settings** | ✅ | Profile card, music folder, library, playback, privacy, version |
+| **Search** | 🟡 Layout | Search field and library shortcuts; results are planned |
+| **Now Playing, Queue, Lyrics, Sleep timer** | 🔜 | Approved in mockups |
+| **Album, Delete confirmation, To review, Backup** | 🔜 | Approved in mockups |
 
 ## 9. Naming glossary (UI copy)
 
-| Concept | English (base) | Spanish |
+| Concept | English | Spanish |
 |---|---|---|
 | Home tab | Home | Inicio |
 | Library tab | Library | Biblioteca |
 | Songs imported recently | Recently added | Recién llegadas |
-| Latest additions on an artist page | Latest | Lo más reciente |
-| Artist smart playlist | New from [Artist] | Lo nuevo de [Artista] |
-| Most played on an artist page | Most played | Las que más suenan |
-| Favorites playlist | My favorites | Mis favoritas |
+| Most played suggestion | Most played | Las que más suenan |
+| Favorites suggestion | My favorites | Mis favoritas |
+| Not played for a while | Forgotten | Olvidadas |
+| Music folder | Music folder | Carpeta de música |
 | Automatic import folder | Entrada | Entrada |
 | Incomplete songs | To review | Por revisar |
-| Delete confirmation button | Delete anyway | Eliminar de todos modos |
-| Continue playback option | Continue with similar songs | Continuar con similares |
 | Greeting | Good morning / Good afternoon / Good evening | Buenos días / Buenas tardes / Buenas noches |
-
-The folder name **Entrada** stays the same in both languages so files always go to one place.

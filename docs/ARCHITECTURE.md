@@ -1,250 +1,192 @@
 # Architecture
 
-CoryMusic follows **MVVM + Services**. Views are thin, ViewModels hold screen state, Services own side effects. Everything runs on-device: **the app contains no networking code**.
+CoryMusic is an **Expo** app (React Native + TypeScript) in the `mobile/` folder. Screens use **Expo Router** file-based routing, shared state lives in three **React context providers**, and all data stays on the device. **The app contains no networking code.**
 
-## 1. Layer overview
+## 1. Overview
 
 ```mermaid
 flowchart TB
-    subgraph UI["Presentation — SwiftUI + Liquid Glass"]
-        V0[WelcomeView]
-        V1[HomeView]
-        V2[LibraryView / AlbumView / ArtistView]
-        V3[PlaylistsView / SmartPlaylistEditorView]
-        V4[NowPlayingView / QueueView / LyricsView]
-        V5[SearchView]
-        V6[MetadataReviewView]
-        V7[SettingsView / BackupView]
+    subgraph Screens["Screens — mobile/app"]
+        W[welcome.tsx]
+        T1["(tabs)/index.tsx — Home"]
+        T2["(tabs)/library.tsx"]
+        T3["(tabs)/playlists.tsx"]
+        T4["(tabs)/search.tsx"]
+        P[profile.tsx]
+        S[settings.tsx]
+        SD["smart/[id].tsx"]
+        SE[smart/edit.tsx]
     end
 
-    subgraph VM["ViewModels — @Observable"]
-        VM0[OnboardingViewModel]
-        VM1[LibraryViewModel]
-        VM2[PlaylistViewModel]
-        VM3[PlayerViewModel]
-        VM4[SearchViewModel]
-        VM5[MetadataReviewViewModel]
-        VM6[SettingsViewModel]
+    subgraph State["Providers — mobile/src/state"]
+        PP[ProfileProvider]
+        LP[LibraryProvider]
+        PL[PlayerProvider]
     end
 
-    subgraph SV["Services"]
-        S1[AudioPlayerService]
-        S2[NowPlayingService]
-        S3[ImportService]
-        S4[InboxWatcher]
-        S5[MetadataService]
-        S6[SuggestionService]
-        S7[SmartPlaylistEngine]
-        S8[SearchService]
-        S9[BackupService]
-        S10[LibraryService]
-        S11[SettingsStore]
+    subgraph Modules["Modules — mobile/src"]
+        DB[library/db.ts]
+        IM[library/importer.ts]
+        FO[library/folder.ts]
+        FI[library/files.ts]
+        RU[smart/rules.ts]
+        KV[storage/kv.ts]
+        I18N[i18n]
     end
 
-    subgraph DATA["On-device data"]
-        D1[(SwiftData store)]
-        D2[/Documents/Music/]
-        D3[/Documents/Entrada/]
-        D4[(UserDefaults)]
-        D5[/Backup folder chosen by user/]
+    subgraph Device["On-device data"]
+        SQL[(corymusic.db)]
+        KVS[(Key-value store)]
+        MUS[/Documents/music/]
+        PRO[/Documents/profile/]
     end
 
-    V0 --> VM0
-    V1 & V2 --> VM1
-    V3 --> VM2
-    V4 --> VM3
-    V5 --> VM4
-    V6 --> VM5
-    V7 --> VM6
+    W & P --> PP
+    T1 & T2 & T3 & SD & SE --> LP
+    T1 & T2 & SD --> PL
 
-    VM0 --> S11
-    VM1 --> S3
-    VM1 --> S10
-    VM2 --> S7
-    VM3 --> S1
-    VM4 --> S8
-    VM5 --> S6
-    VM6 --> S9
-    VM6 --> S11
+    PP --> KV
+    PP --> FI
+    PP --> I18N
+    LP --> DB
+    LP --> IM
+    LP --> FO
+    LP --> RU
+    PL --> FI
 
-    S1 --> S2
-    S4 --> S3
-    S3 --> S5
-    S3 --> S6
-    S3 --> D2
-    S4 --> D3
-    S3 --> D1
-    S10 --> D1
-    S10 --> D2
-    S7 --> D1
-    S8 --> D1
-    S9 --> D1
-    S9 --> D5
-    S11 --> D4
+    IM --> DB
+    IM --> FI
+    FO --> IM
+    DB --> SQL
+    KV --> KVS
+    FI --> MUS
+    FI --> PRO
 ```
 
-## 2. Services
+## 2. Providers
 
-| Service | Responsibility |
+| Provider | Holds | Main actions |
+|---|---|---|
+| **ProfileProvider** | Name, photo, language preference, onboarding flag | `setName`, `setPhoto`, `removePhoto`, `setLanguage`, `completeOnboarding` |
+| **LibraryProvider** | Tracks, artists, storage used, smart playlists, music folder, sync state | `importMusic`, `syncMusicFolder`, `chooseMusicFolder`, `forgetMusicFolder`, `toggleFavorite`, `recordPlay`, `saveSmartPlaylist`, `deleteSmartPlaylist` |
+| **PlayerProvider** | Current track and play state | `toggle(track)`; records a play after 50% listened |
+
+## 3. Modules
+
+| Module | Responsibility |
 |---|---|
-| **AudioPlayerService** | Wraps `AVPlayer`; queue, play/pause/seek, shuffle/repeat; sleep timer with fade-out; continue with similar songs when the queue ends; `AVAudioSession(.playback)`; interruptions and route changes; counts a play after 50% listened |
-| **NowPlayingService** | `MPNowPlayingInfoCenter` (title, artist, artwork, progress) and `MPRemoteCommandCenter` handlers |
-| **ImportService** | Copies files into `Documents/Music/`, detects duplicates, creates `Track`/`Artist`/`Album`, marks incomplete tracks `needsReview` |
-| **InboxWatcher** | On launch/foreground, scans `Documents/Entrada/` and sends new files to `ImportService` (toggle in Settings) |
-| **MetadataService** | Loads tags and artwork asynchronously from `AVURLAsset` |
-| **SuggestionService** | Filename patterns, noise cleanup, folder hints, fuzzy match to existing artists; **Foundation Models** on-device model for messy names when available, rules otherwise |
-| **SmartPlaylistEngine** | Translates rules into predicates, evaluates matching tracks, applies sort and limit; re-evaluated when tracks change |
-| **SearchService** | Case- and accent-insensitive search across artists, albums, tracks, playlists; ranks a top result |
-| **LibraryService** | Deletes tracks after confirmation: removes playlist entries, the `Track` record, the audio file, and orphaned albums/artists |
-| **BackupService** | Encodes/decodes JSON backups; weekly automatic backup to the user-chosen folder via a security-scoped bookmark; keeps the 5 most recent; restore report with pending songs |
-| **SettingsStore** | Typed wrapper over `UserDefaults` (`@AppStorage`) for name, toggles, default timer and backup state |
+| `library/db.ts` | Opens `corymusic.db`, creates and migrates tables, reads and writes tracks and smart playlists |
+| `library/importer.ts` | Files picker, supported format check, duplicate detection, copy into `Documents/music`, file name parsing |
+| `library/folder.ts` | Folder picker and recursive scan (up to 5 levels, 5,000 files), counts unsupported audio |
+| `library/files.ts` | Paths for music and profile photo, supported extensions, safe delete |
+| `smart/rules.ts` | Rule types, allowed conditions per field, validation, evaluation, sorting, presets, rule descriptions |
+| `storage/kv.ts` | Typed keys over the SQLite key-value store |
+| `i18n` | i18next setup with English and Spanish resources and the saved language preference |
+| `theme/tokens.ts` | Colors, typography, radius, spacing |
 
-## 3. Sequence — import with suggestions
+## 4. Sequence — import from Files
 
 ```mermaid
 sequenceDiagram
     actor U as User
-    participant IW as InboxWatcher
-    participant IS as ImportService
-    participant MS as MetadataService
-    participant SS as SuggestionService
-    participant DB as SwiftData
+    participant LP as LibraryProvider
+    participant IM as importer.ts
+    participant FS as Documents/music
+    participant DB as corymusic.db
 
-    alt Files picker
-        U->>IS: import(selected URLs)
-    else Entrada folder
-        IW->>IW: scan Documents/Entrada on launch
-        IW->>IS: import(new files)
-    end
+    U->>LP: Import your music
+    LP->>IM: importFromFiles()
+    IM->>U: Files picker, multiple audio files
+    U-->>IM: selected files
     loop each file
-        IS->>IS: duplicate? then skip
-        IS->>IS: copy to Documents/Music
-        IS->>MS: loadTags(file)
-        MS-->>IS: tags + artwork
-        alt tags incomplete
-            IS->>SS: suggest(fileName, folder, library)
-            SS->>SS: rules, then on-device model if available
-            SS-->>IS: suggestion
-            IS->>DB: insert Track(needsReview = true, suggestion)
-        else tags complete
-            IS->>DB: insert Track
-        end
+        IM->>IM: supported format? duplicate?
+        IM->>FS: copy file
+        IM->>IM: parse artist and title from file name
+        IM->>DB: insert track
     end
-    IS-->>U: summary (imported, duplicates, to review)
+    IM-->>LP: summary
+    LP->>DB: reload tracks
+    LP-->>U: import summary alert
 ```
 
-## 4. Sequence — background playback
+## 5. Sequence — music folder sync
 
 ```mermaid
 sequenceDiagram
     actor U as User
-    participant PVM as PlayerViewModel
-    participant AP as AudioPlayerService
-    participant AS as AVAudioSession
-    participant NP as NowPlayingService
-    participant LS as Lock Screen
+    participant LP as LibraryProvider
+    participant FO as folder.ts
+    participant IM as importer.ts
+    participant DB as corymusic.db
 
-    U->>PVM: play(track, queue)
-    PVM->>AP: setQueue + play()
-    AP->>AS: setCategory(.playback), setActive(true)
-    AP->>NP: update(nowPlaying)
-    NP->>LS: title, artist, artwork, progress
-    U->>LS: next
-    LS->>NP: remote command next
-    NP->>AP: next()
-    AP->>AP: count play if > 50% listened
-    AP->>NP: update(nowPlaying)
+    U->>LP: Sync
+    alt folder already opened in this session
+        LP->>FO: scan saved directory
+    else first sync after launching the app
+        LP->>FO: pickMusicFolder(saved location)
+        FO->>U: folder picker opens at the saved folder
+        U-->>FO: confirm folder
+        LP->>LP: remember folder name and location
+        LP->>FO: scan directory
+    end
+    FO-->>LP: audio files found, unsupported count
+    LP->>IM: importCandidates(files)
+    IM->>DB: insert new tracks, skip duplicates
+    LP->>LP: save last sync time
+    LP-->>U: sync summary alert
 ```
 
-## 5. Sequence — delete a song
+iOS grants access to a picked folder **for the current app session only**, so after relaunching, the picker opens at the saved folder and the user confirms it.
+
+## 6. Sequence — playback and smart playlists
 
 ```mermaid
 sequenceDiagram
     actor U as User
-    participant V as AlbumView
-    participant LS as LibraryService
-    participant DB as SwiftData
-    participant FS as Documents/Music
-    participant SE as SmartPlaylistEngine
+    participant R as TrackRow
+    participant PL as PlayerProvider
+    participant A as expo-audio
+    participant LP as LibraryProvider
+    participant RU as rules.ts
 
-    U->>V: tap delete on a song
-    V->>U: confirmation dialog
-    alt Delete anyway
-        U->>V: confirm
-        V->>LS: delete(track)
-        LS->>DB: remove playlist entries and track
-        LS->>FS: remove audio file
-        LS->>DB: remove empty album and artist
-        DB-->>SE: tracks changed
-        V-->>U: toast "Song deleted"
-    else Cancel
-        U->>V: cancel
-    end
+    U->>R: tap song
+    R->>PL: toggle(track)
+    PL->>A: replace source and play
+    A-->>PL: status updates
+    PL->>PL: 50% of duration reached?
+    PL->>LP: recordPlay(track)
+    LP->>LP: reload tracks
+    LP->>RU: evaluate each smart playlist
+    RU-->>U: lists update automatically
 ```
 
-## 6. Sequence — weekly automatic backup
-
-```mermaid
-sequenceDiagram
-    participant App as App launch
-    participant SS as SettingsStore
-    participant BS as BackupService
-    participant DB as SwiftData
-    participant F as Backup folder
-
-    App->>SS: weekly backup on? last backup date?
-    alt enabled and 7 days passed
-        App->>BS: runAutomaticBackup()
-        BS->>SS: resolve folder bookmark
-        BS->>DB: read playlists, rules, favorites, edits, lyrics
-        BS->>F: write corymusic-backup-date.json
-        BS->>F: delete older backups beyond 5
-        BS->>SS: save lastBackupAt
-    else folder unavailable
-        BS-->>App: ask the user to choose the folder again
-    end
-```
-
-## 7. Playback state machine
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Loading: play(track)
-    Loading --> Playing: ready
-    Loading --> Failed: error
-    Playing --> Paused: pause / interruption began
-    Paused --> Playing: play / interruption ended
-    Playing --> Loading: next / previous
-    Playing --> Paused: headphones unplugged
-    Playing --> Paused: sleep timer ended
-    Playing --> Loading: queue finished and similar songs on
-    Playing --> Idle: queue finished
-    Failed --> Loading: skip to next
-    Paused --> Idle: stop
-```
-
-## 8. Key technical decisions
+## 7. Key technical decisions
 
 | Decision | Choice | Reason |
 |---|---|---|
-| UI | SwiftUI + Liquid Glass (iOS 26) | Native premium look, less code |
-| Minimum iOS | **26** | Liquid Glass APIs (`glassEffect`, `tabViewBottomAccessory`) |
-| Persistence | SwiftData; settings in `UserDefaults` | Native, on-device, survives re-installs |
-| Audio storage | Copy into sandbox | Files stay available after re-install |
-| Metadata edits | Stored in database, original file untouched | Safe; no risk of corrupting files |
-| Deletion | Always confirmed; removes file from storage | Frees space; avoids accidents |
-| Backups | Outside the app, user-chosen folder | Survive deleting the app |
-| Networking | **None** | No external services, privacy, zero cost |
-| AI suggestions | Foundation Models in v1.0, rules fallback | On-device, free, private |
-| Localization | String Catalog, English base + Spanish | Standard Xcode workflow |
-| Dependencies | None | Nothing to maintain or pay for |
+| Framework | Expo SDK 57, React Native, TypeScript | Preview on the iPhone from Windows with Expo Go |
+| Navigation | Expo Router, `NativeTabs` | Real iOS 26 tab bar with Liquid Glass and a separate search tab |
+| Glass | `expo-glass-effect` with fallback to a plain view | Native glass on iOS 26 |
+| Icons | `expo-symbols` | Apple SF Symbols |
+| Library data | `expo-sqlite` | Relational data for tracks, playlists and rules |
+| Settings | SQLite key-value store | Simple synchronous reads at startup |
+| Audio files | Copied into the app's documents folder | Always available offline, independent of the source |
+| Smart playlists | Evaluated in memory from rules | Small libraries, always up to date, no stored results |
+| Networking | None | No external services, privacy, zero cost |
 
-## 9. Capabilities & Info.plist
+## 8. Expo Go limitations
 
-| Setting | Value | Why |
+| Feature | In Expo Go | In the installed app |
 |---|---|---|
-| Background Modes | Audio, AirPlay, and Picture in Picture | Keep playing when locked |
-| `UIFileSharingEnabled` | `YES` | Show the app folder (Music, Entrada) in Files and Finder |
-| `LSSupportsOpeningDocumentsInPlace` | `YES` | Open and export backups in Files |
-| Localizations | English, Spanish | Project → Info → Localizations |
+| Background audio and Lock Screen | Not available | Available with the `expo-audio` background option |
+| *Entrada* folder visible in Files | Not available | Available with file sharing enabled |
+| Remembering folder access across launches | Not available | Possible with a custom native module |
+
+## 9. App configuration
+
+| Setting | Value |
+|---|---|
+| Name | CoryMusic |
+| Bundle identifier | `com.sabrinasalomon.corymusic` |
+| Appearance | Dark |
+| Config plugins | expo-router, expo-localization, expo-font, expo-status-bar, expo-sqlite, expo-audio, expo-asset |

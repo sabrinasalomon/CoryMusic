@@ -1,93 +1,74 @@
 # Setup
 
-Everything here is free. Target hardware: **MacBook Neo** (macOS Tahoe) and **iPhone 17** (iOS 26).
+Run CoryMusic on your iPhone with **Expo Go**, straight from Windows or macOS. Everything here is free.
 
-## 1. Install tools
-1. Install the latest **Xcode** (iOS 26 SDK or later) from the Mac App Store and open it once.
-2. Sign in: **Xcode → Settings → Accounts → + → Apple ID**. A free *Personal Team* is created.
-3. Optional: the **SF Symbols** app from Apple's developer site. Icon Composer is included with Xcode: **Xcode → Open Developer Tool → Icon Composer**.
+## 1. Requirements
 
-### MacBook Neo tips (8 GB RAM)
-- Prefer running on the iPhone 17 over simulators; avoid downloading extra simulator runtimes.
-- Close memory-heavy apps while building.
-- Keep 40 GB or more free; clear old DerivedData from **Xcode → Settings → Locations** if space runs low.
+| Item | Details |
+|---|---|
+| Computer | Windows or macOS with **Node.js 20+** and **Git** |
+| iPhone | iOS 26 (tested on iPhone 17) |
+| Expo Go | Free on the App Store — must support **SDK 57** |
+| Network | Computer and iPhone on the same Wi-Fi |
 
-## 2. Clone the repository
-Clone into `~/Developer` so the paths match the auto-renew script:
+## 2. Get the code
+
 ```bash
-mkdir -p ~/Developer
-git clone https://github.com/sabrinasalomon/CoryMusic.git ~/Developer/CoryMusic
+git clone https://github.com/sabrinasalomon/CoryMusic.git
+cd CoryMusic/mobile
+npm install
 ```
 
-## 3. Create the Xcode project
-1. **File → New → Project → iOS → App**.
-2. Fill in:
-   | Field | Value |
-   |---|---|
-   | Product Name | `CoryMusic` |
-   | Team | *Your Name (Personal Team)* |
-   | Organization Identifier | `com.sabrinasalomon` |
-   | Bundle Identifier | `com.sabrinasalomon.corymusic` ← **never change it** |
-   | Interface | SwiftUI |
-   | Language | Swift |
-   | Storage | SwiftData |
-3. Save it **inside** `~/Developer/CoryMusic` and uncheck *Create Git repository* (the repo already exists).
-4. Create groups: `App`, `DesignSystem`, `Models`, `Services`, `ViewModels`, `Views`, `Resources`.
-5. **Minimum Deployments → iOS 26.0**.
+## 3. Start the development server
 
-## 4. App icon
-1. Drag `design/icon/CoryMusic.icon` into the Xcode project navigator (enable *Copy items if needed* only if you want a copy inside the target folder).
-2. Target → **General → App Icons and Launch Screen → App Icon**: `CoryMusic`.
-3. Optional: double-click `CoryMusic.icon` to open it in Icon Composer and review Default, Dark, Clear and Tinted.
+```bash
+npx expo start --lan
+```
 
-## 5. Localization (English + Spanish)
-1. Project → **Info → Localizations** → **+** → **Spanish (es)**. English stays the development language.
-2. **File → New → File → String Catalog** → `Localizable.xcstrings` in `Resources`.
-3. Write UI text in English in code (`Text("Your collection")`); Xcode collects the strings on build.
-4. Fill in Spanish translations in the String Catalog using the glossary in [DESIGN.md](DESIGN.md#9-naming-glossary-ui-copy).
-5. Test Spanish on the iPhone: **Settings → Apps → CoryMusic → Language → Español**.
+A QR code appears in the terminal. Keep this terminal open while you use the app.
 
-## 6. Capabilities, Info.plist and appearance
-1. **Signing & Capabilities → + Capability → Background Modes** → check **Audio, AirPlay, and Picture in Picture**.
-2. **Info** tab → add:
-   | Key | Type | Value |
-   |---|---|---|
-   | `UIFileSharingEnabled` | Boolean | YES |
-   | `LSSupportsOpeningDocumentsInPlace` | Boolean | YES |
-3. Force dark appearance at the root view with `.preferredColorScheme(.dark)` (see [DESIGN.md](DESIGN.md)).
+**Windows with several network adapters** (VirtualBox, VPNs): tell Expo which IP to use before starting. Replace the address with your computer's Wi-Fi or Ethernet IP:
 
-## 7. Auto-renew every 7 days
+```bash
+$env:REACT_NATIVE_PACKAGER_HOSTNAME="192.168.1.100"
+```
 
-Free-provisioned apps expire after 7 days. Re-installing over the existing app **keeps all data, playlists and imported music**.
+## 4. Open it on the iPhone
 
-> ⚠️ Never delete the app and never change the bundle identifier — either erases the app's data. Backups in your chosen folder outside the app are not affected.
+1. Open the **Camera**, point at the QR code and tap the Expo Go banner — or open **Expo Go** and scan from there.
+2. If iOS asks to find devices on your local network, tap **Allow** (**Settings → Privacy & Security → Local Network → Expo Go**).
+3. The first load downloads the app bundle; later changes reload automatically.
 
-### Option A — Script + launchd
-1. Find your iPhone identifier:
-   ```bash
-   xcrun devicectl list devices
-   ```
-2. Edit [`scripts/renew-corymusic.sh`](../scripts/renew-corymusic.sh): set `UDID`.
-3. Edit [`scripts/com.sabrinasalomon.renew-corymusic.plist`](../scripts/com.sabrinasalomon.renew-corymusic.plist): replace `YOUR_MAC_USER`.
-4. Install:
-   ```bash
-   chmod +x ~/Developer/CoryMusic/scripts/renew-corymusic.sh
-   cp ~/Developer/CoryMusic/scripts/com.sabrinasalomon.renew-corymusic.plist ~/Library/LaunchAgents/
-   launchctl load ~/Library/LaunchAgents/com.sabrinasalomon.renew-corymusic.plist
-   ```
-5. At run time the Mac must be awake (or it runs on wake), the iPhone on the same Wi-Fi and unlocked or charging, and your Apple ID signed in to Xcode. If the login keychain is locked, signing can fail — check `/tmp/renew-corymusic.log` and run the script manually once.
+## 5. Add music
 
-### Option B — AltStore
-AltServer on the Mac + AltStore on the iPhone refresh the app in the background on the same Wi-Fi. Export the app as `.ipa` and install it through AltStore. It asks for an Apple ID — consider a secondary one.
+| Method | How |
+|---|---|
+| **Import from Files** | Home or Library → **Import your music** → choose songs |
+| **Music folder** | Library → **Music folder** card → **Choose folder** (for example OneDrive › Music) → **Sync** whenever you add songs |
 
-## 8. Run on your iPhone
-1. Connect the iPhone by cable, unlock it and tap **Trust**.
-2. iPhone: **Settings → Privacy & Security → Developer Mode → On** (restart).
-3. Select the iPhone 17 as run destination and press **⌘R**.
-4. First run: **Settings → General → VPN & Device Management →** your Apple ID **→ Trust**.
-5. Optional: **Window → Devices and Simulators → Connect via network** for Wi-Fi installs.
+Use MP3, M4A, AAC, WAV, AIFF or FLAC. `.ogg` files are not supported on iOS. For folders in OneDrive or iCloud, make the songs available offline before syncing.
 
-## 9. Habits
-- Choose the **backup folder** the first time the app asks, outside the app (e.g. *On My iPhone › CoryMusic Backups*).
-- Keep audio out of Git (`.gitignore` already does it).
-- Never add third-party attribution or watermarks to commits, code or docs.
+## 6. Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| *"You're signed in to Expo Go as … but not signed in to Expo CLI"* | Sign out in Expo Go, **or** run `npx expo login` with the same account |
+| The iPhone never connects | Same Wi-Fi on both devices; allow Local Network for Expo Go; set `REACT_NATIVE_PACKAGER_HOSTNAME` to the right IP |
+| `ConfigError: package.json does not exist` | Run Expo from the `mobile` folder, not the repository root |
+| Changes don't appear | Stop the server with **Ctrl + C** and run `npx expo start --lan --clear`; make sure no other Expo server is using port 8081 |
+| Folder asks again after reopening | Expected: iOS grants folder access for one app session; confirm the folder in the picker |
+| A song won't import | Check the format and that the file is downloaded to the iPhone |
+
+## 7. Checks before committing
+
+```bash
+cd mobile
+npx tsc --noEmit
+npx expo-doctor
+```
+
+Both must pass. Never add third-party attribution or watermarks to commits, code or docs.
+
+## 8. Installed app (later)
+
+Background audio, Lock Screen controls and the automatic *Entrada* folder need a **development build** installed on the iPhone. This requires a Mac with Xcode and a free Apple ID; apps signed this way expire after 7 days and must be re-installed (data is kept). The helper scripts in [`scripts/`](../scripts) will be updated for the Expo project when that phase starts.

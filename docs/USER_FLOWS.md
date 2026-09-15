@@ -1,173 +1,126 @@
 # User Flows
 
-UI labels follow the glossary in [DESIGN.md](DESIGN.md#9-naming-glossary-ui-copy). Diagrams use the English (base) names.
+UI labels follow the glossary in [DESIGN.md](DESIGN.md#9-naming-glossary-ui-copy). Diagrams use the English names. Flows marked *planned* are not implemented yet.
 
 ## 1. Screen map
 
 ```mermaid
 flowchart LR
-    Launch([App launch]) --> First{First launch?}
-    First -- Yes --> Welcome[Welcome]
+    Launch([App launch]) --> First{Welcome done?}
+    First -- No --> Welcome[Welcome]
     Welcome --> Tabs
-    First -- No --> Tabs
+    First -- Yes --> Tabs
 
-    subgraph Tabs["Tab bar - Liquid Glass"]
+    subgraph Tabs["Native tab bar - Liquid Glass"]
         T1[Home]
         T2[Library]
         T3[Playlists]
         T4[Search]
     end
 
+    T1 --> Profile[Profile]
     T1 --> Settings[Settings]
-    T1 --> Recent[Recently added]
-    T1 --> MoreFrom[More from artist]
+    Settings --> Profile
 
-    T2 --> Artists[Artists]
-    T2 --> Albums[Albums]
     T2 --> Songs[Songs]
-    T2 --> Import[Import sheet]
-    T2 --> Review[To review]
-    Artists --> ArtistPage[Artist page]
-    Albums --> AlbumPage[Album page]
-    AlbumPage --> Delete[Delete confirmation]
-    Songs --> Delete
-    Review --> EditSong[Review song]
+    T2 --> Artists[Artists]
+    T2 --> Folder[Music folder card]
+    T2 --> Import[Import from Files]
 
-    T3 --> Pinned[Pinned playlist]
-    T3 --> Detail[Playlist detail]
-    T3 --> Create[New playlist sheet]
-    Detail --> AddSongs[Add songs sheet]
-    Create --> RuleEditor[Rule editor]
-
-    T4 --> Results[Scoped results]
-
-    Settings --> Backup[Backup and restore]
-
-    Tabs -.-> Mini[Mini player]
-    Mini --> NowPlaying[Now Playing]
-    NowPlaying --> Queue[Queue]
-    NowPlaying --> Lyrics[Lyrics]
-    NowPlaying --> Timer[Sleep timer sheet]
+    T3 --> Suggestions[One-tap suggestions]
+    T3 --> Detail[Smart playlist detail]
+    T3 --> Editor[Smart playlist editor]
+    Detail --> Editor
 ```
 
-## 2. Welcome (first launch)
+## 2. Welcome
 
 ```mermaid
 flowchart TD
-    A([Open CoryMusic for the first time]) --> B[Welcome: CM mark + Get started]
+    A([First launch]) --> B[Welcome: CM mark + Get started]
     B --> C[What's your name?]
     C --> D{Name entered?}
     D -- Continue without name --> E[Inline error: enter a name or tap Skip]
     E --> C
-    D -- Yes --> F[Save userName]
+    D -- Yes --> F[Save name]
     D -- Skip --> G[No name]
-    F & G --> H{Current hour}
-    H -- 05 to 11 --> I1[Good morning]
-    H -- 12 to 18 --> I2[Good afternoon]
-    H -- 19 to 04 --> I3[Good evening]
-    I1 & I2 & I3 --> J[Greeting with name if any + import options]
-    J --> K{Import now?}
-    K -- Files --> L[Files picker]
-    K -- Mac or AirDrop --> M[Explain Entrada folder]
-    K -- Later --> N[Home with empty state]
-    L & M --> O[Import progress and summary]
-    O --> P[Home]
+    F & G --> H[Greeting by time of day]
+    H --> I{Import now?}
+    I -- Import your music --> J[Files picker, then Home]
+    I -- Maybe later --> K[Home]
 ```
 
-## 3. Automatic import from Entrada
+## 3. Import from Files
 
 ```mermaid
 flowchart TD
-    A[User copies songs to Entrada via Finder, AirDrop or Files] --> B[User opens CoryMusic]
-    B --> C{Entrada auto-import on?}
-    C -- No --> Z[Files wait in Entrada]
-    C -- Yes --> D[Import new files]
-    D --> E{Tags complete?}
-    E -- Yes --> F[Added to library]
-    E -- No --> G[Added with suggestion to To review]
-    F & G --> H[Smart playlists and pending restored songs update]
-    H --> I[Notice in Library: N new songs from Entrada]
+    A[Home, Library or Welcome] --> B[Import your music]
+    B --> C[Files picker - choose several songs]
+    C --> D{For each file}
+    D -- ogg or other unsupported --> E[Count as not supported]
+    D -- same name and size already imported --> F[Count as duplicate]
+    D -- new --> G[Copy into the app and read artist - title from the name]
+    E & F & G --> H[Summary alert]
+    H --> I[Library, Recently added and smart playlists update]
 ```
 
-## 4. Fix incomplete songs
+## 4. Music folder sync
 
 ```mermaid
 flowchart TD
-    A[To review] --> B{Has suggestion?}
-    B -- Yes --> C[Review song: suggestion card]
-    C --> D{Accept?}
-    D -- Accept --> E[Fields filled, editable]
-    D -- Ignore --> F[Fill manually with autocomplete]
-    B -- No --> F
-    E & F --> G{Apply to same folder?}
-    G -- Yes --> H[Album, artist, artwork applied to group]
-    G -- No --> I[Save]
-    H --> I
-    I --> J[Leaves To review and joins matching smart playlists]
-    A --> K[Select several songs] --> L[Bulk edit artist, album or artwork]
-    A --> M[Accept all suggestions]
+    A[Music folder card in Library or Settings] --> B{Folder chosen?}
+    B -- No --> C[Choose folder]
+    C --> D[Folder picker, e.g. OneDrive - Music]
+    B -- Yes --> E[Sync]
+    E --> F{Opened in this session?}
+    F -- Yes --> G[Scan folder and subfolders]
+    F -- No --> H[Picker opens at the saved folder - confirm]
+    H --> G
+    D --> G
+    G --> I[Copy new songs, skip duplicates, count unsupported]
+    I --> J[Summary + last sync time]
+    A --> K[Change - pick another folder]
+    A --> L[Forget folder - songs stay in the library]
 ```
 
-## 5. Delete a song
+## 5. Smart playlists
 
 ```mermaid
 flowchart TD
-    A[Album page, song list or song menu] --> B[Tap delete]
-    B --> C[Confirmation: removed from library, all playlists and iPhone storage]
-    C --> D{Choice}
-    D -- Cancel --> E[Nothing changes]
-    D -- Delete anyway --> F[Remove playlist entries and track]
-    F --> G[Delete audio file]
-    G --> H[Remove empty album or artist]
-    H --> I[Toast: Song deleted]
+    A[Playlists] --> B{How?}
+    B -- Suggestion --> C[Create instantly and open detail]
+    B -- Plus button --> D[Editor]
+    D --> E[Name]
+    E --> F[Match all or any]
+    F --> G[Rules: field, condition, value]
+    G --> H[Sort and limit]
+    H --> I[Live preview count]
+    I --> J{Valid?}
+    J -- Missing name or value --> K[Inline error]
+    K --> E
+    J -- Yes --> L[Save and open detail]
+    L --> M[Detail: rules, Play, song list, Edit rules]
+    M --> N[Delete from editor - confirmation, songs stay]
 ```
 
-## 6. Create a playlist
+## 6. Favorites and plays
 
 ```mermaid
 flowchart TD
-    A[Playlists] --> B[Glass plus button]
-    B --> C[New playlist sheet]
-    C --> D{Type}
-    D -- Normal --> E[Name + cover]
-    E --> F[Add songs: songs, albums or artists]
-    F --> G[Detail: reorder, remove with undo]
-    D -- Smart --> H[Name + cover]
-    H --> I[Rule editor: match, rules, sort, limit, favorites only]
-    I --> J[Live preview count]
-    J --> K[Save - updates automatically]
+    A[Any song row] --> B{Action}
+    B -- Tap heart --> C[Toggle favorite]
+    B -- Tap row --> D[Play or pause]
+    D --> E{Half of the song heard?}
+    E -- Yes --> F[Play count + 1 and last played now]
+    C & F --> G[Smart playlists re-evaluate]
 ```
 
-## 7. Favorite artist to smart playlist
+## 7. Planned flows
 
-```mermaid
-flowchart TD
-    A[Artist page] --> B[Tap heart]
-    B --> C[Artist marked favorite]
-    C --> D{Create New from artist?}
-    D -- Yes --> E[Smart playlist: artist is X and imported in last 30 days]
-    D -- No --> F[Done]
-    E --> G[New songs from X appear automatically after import]
-```
-
-## 8. Backup & restore
-
-```mermaid
-flowchart TD
-    A[App launch] --> B{Weekly backup on and 7 days passed?}
-    B -- Yes --> C{Backup folder available?}
-    C -- Yes --> D[Write JSON, keep 5 most recent]
-    C -- No --> E[Ask to choose the folder again]
-    B -- No --> F[Continue]
-
-    G[Settings - Backup] --> H{Action}
-    H -- Back up now --> D
-    H -- Change folder --> I[Folder picker outside the app]
-    H -- Restore --> J[Pick JSON]
-    J --> K{schemaVersion supported?}
-    K -- No --> L[Error message]
-    K -- Yes --> M[Match tracks by fileName + duration]
-    M --> N[Recreate playlists, rules, favorites, edits, lyrics]
-    N --> O[Report: restored and missing songs]
-    O --> P[Missing songs stay pending until imported]
-```
+| Flow | Summary |
+|---|---|
+| Now Playing | Full-screen player with queue, shuffle, repeat and sleep timer |
+| Delete a song | Confirmation, then remove from library, playlists and storage |
+| To review | Complete missing song data with suggestions |
+| Backup | Weekly automatic JSON backup and restore report |
+| Entrada folder | Automatic import on launch in the installed app |

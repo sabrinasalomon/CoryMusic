@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "CoryMusic",
+    "slug": "corymusic",
+    "scheme": "corymusic",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#000000",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.sabrinasalomon.corymusic"
+    },
+    "android": {
+      "package": "com.sabrinasalomon.corymusic",
+      "adaptiveIcon": {
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-font",
+      "expo-status-bar",
+      "expo-sqlite",
+      "expo-audio",
+      "expo-asset"
+    ]
+  }
+}

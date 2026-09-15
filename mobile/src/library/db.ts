@@ -1,0 +1,209 @@
+import { openDatabaseSync } from 'expo-sqlite';
+
+import { isRuleCondition, isRuleField, MATCH_MODES, SORT_OPTIONS } from '../smart/rules';
+import type { MatchMode, SmartPlaylist, SmartPlaylistDraft, SmartRule, SortBy } from '../smart/rules';
+
+export type Track = {
+  id: number;
+  title: string;
+  artist: string | null;
+  fileName: string;
+  originalName: string;
+  sizeBytes: number;
+  importedAt: number;
+  playCount: number;
+  lastPlayedAt: number | null;
+  isFavorite: boolean;
+};
+
+type TrackRow = {
+  id: number;
+  title: string;
+  artist: string | null;
+  file_name: string;
+  original_name: string;
+  size_bytes: number;
+  imported_at: number;
+  play_count: number;
+  last_played_at: number | null;
+  is_favorite: number;
+};
+
+type PlaylistRow = {
+  id: number;
+  name: string;
+  match_mode: string;
+  sort_by: string;
+  limit_count: number | null;
+  created_at: number;
+  updated_at: number;
+};
+
+type RuleRow = {
+  playlist_id: number;
+  field: string;
+  condition: string;
+  value: string;
+};
+
+const db = openDatabaseSync('corymusic.db');
+
+db.execSync(`
+  PRAGMA journal_mode = WAL;
+  PRAGMA foreign_keys = ON;
+  CREATE TABLE IF NOT EXISTS tracks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    artist TEXT,
+    file_name TEXT NOT NULL UNIQUE,
+    original_name TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL DEFAULT 0,
+    imported_at INTEGER NOT NULL,
+    play_count INTEGER NOT NULL DEFAULT 0,
+    last_played_at INTEGER,
+    is_favorite INTEGER NOT NULL DEFAULT 0
+  );
+  CREATE TABLE IF NOT EXISTS playlists (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    kind TEXT NOT NULL DEFAULT 'smart',
+    name TEXT NOT NULL,
+    match_mode TEXT NOT NULL DEFAULT 'all',
+    sort_by TEXT NOT NULL DEFAULT 'recentlyAdded',
+    limit_count INTEGER,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS smart_rules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    playlist_id INTEGER NOT NULL REFERENCES playlists(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    field TEXT NOT NULL,
+    condition TEXT NOT NULL,
+    value TEXT NOT NULL
+  );
+`);
+
+const trackColumns = db.getAllSync<{ name: string }>('PRAGMA table_info(tracks)').map((column) => column.name);
+if (!trackColumns.includes('play_count')) db.execSync('ALTER TABLE tracks ADD COLUMN play_count INTEGER NOT NULL DEFAULT 0');
+if (!trackColumns.includes('last_played_at')) db.execSync('ALTER TABLE tracks ADD COLUMN last_played_at INTEGER');
+if (!trackColumns.includes('is_favorite')) db.execSync('ALTER TABLE tracks ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0');
+
+function toTrack(row: TrackRow): Track {
+  return {
+    id: row.id,
+    title: row.title,
+    artist: row.artist,
+    fileName: row.file_name,
+    originalName: row.original_name,
+    sizeBytes: row.size_bytes,
+    importedAt: row.imported_at,
+    playCount: row.play_count,
+    lastPlayedAt: row.last_played_at,
+    isFavorite: row.is_favorite === 1,
+  };
+}
+
+export function listTracks(): Track[] {
+  return db.getAllSync<TrackRow>('SELECT * FROM tracks ORDER BY imported_at DESC, id DESC').map(toTrack);
+}
+
+export function isDuplicate(originalName: string, sizeBytes: number): boolean {
+  return (
+    db.getFirstSync<{ id: number }>('SELECT id FROM tracks WHERE original_name = ? AND size_bytes = ?', originalName, sizeBytes) !== null
+  );
+}
+
+export function insertTrack(track: Pick<Track, 'title' | 'artist' | 'fileName' | 'originalName' | 'sizeBytes'>): void {
+  db.runSync(
+    'INSERT INTO tracks (title, artist, file_name, original_name, size_bytes, imported_at) VALUES (?, ?, ?, ?, ?, ?)',
+    track.title,
+    track.artist,
+    track.fileName,
+    track.originalName,
+    track.sizeBytes,
+    Date.now(),
+  );
+}
+
+export function recordPlay(trackId: number): void {
+  db.runSync('UPDATE tracks SET play_count = play_count + 1, last_played_at = ? WHERE id = ?', Date.now(), trackId);
+}
+
+export function setFavorite(trackId: number, favorite: boolean): void {
+  db.runSync('UPDATE tracks SET is_favorite = ? WHERE id = ?', favorite ? 1 : 0, trackId);
+}
+
+export function listSmartPlaylists(): SmartPlaylist[] {
+  const rows = db.getAllSync<PlaylistRow>("SELECT * FROM playlists WHERE kind = 'smart' ORDER BY created_at ASC, id ASC");
+  const ruleRows = db.getAllSync<RuleRow>('SELECT playlist_id, field, condition, value FROM smart_rules ORDER BY playlist_id, position');
+
+  const rulesByPlaylist = new Map<number, SmartRule[]>();
+  for (const rule of ruleRows) {
+    if (!isRuleField(rule.field) || !isRuleCondition(rule.condition)) continue;
+    const list = rulesByPlaylist.get(rule.playlist_id) ?? [];
+    list.push({ field: rule.field, condition: rule.condition, value: rule.value });
+    rulesByPlaylist.set(rule.playlist_id, list);
+  }
+
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    matchMode: (MATCH_MODES as readonly string[]).includes(row.match_mode) ? (row.match_mode as MatchMode) : 'all',
+    sortBy: (SORT_OPTIONS as readonly string[]).includes(row.sort_by) ? (row.sort_by as SortBy) : 'recentlyAdded',
+    limit: row.limit_count,
+    rules: rulesByPlaylist.get(row.id) ?? [],
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
+}
+
+export function saveSmartPlaylist(draft: SmartPlaylistDraft): number {
+  const now = Date.now();
+  db.execSync('BEGIN');
+  try {
+    let id = draft.id;
+    if (id === undefined) {
+      const result = db.runSync(
+        "INSERT INTO playlists (kind, name, match_mode, sort_by, limit_count, created_at, updated_at) VALUES ('smart', ?, ?, ?, ?, ?, ?)",
+        draft.name,
+        draft.matchMode,
+        draft.sortBy,
+        draft.limit,
+        now,
+        now,
+      );
+      id = result.lastInsertRowId;
+    } else {
+      db.runSync(
+        'UPDATE playlists SET name = ?, match_mode = ?, sort_by = ?, limit_count = ?, updated_at = ? WHERE id = ?',
+        draft.name,
+        draft.matchMode,
+        draft.sortBy,
+        draft.limit,
+        now,
+        id,
+      );
+      db.runSync('DELETE FROM smart_rules WHERE playlist_id = ?', id);
+    }
+    draft.rules.forEach((rule, position) => {
+      db.runSync(
+        'INSERT INTO smart_rules (playlist_id, position, field, condition, value) VALUES (?, ?, ?, ?, ?)',
+        id as number,
+        position,
+        rule.field,
+        rule.condition,
+        rule.value,
+      );
+    });
+    db.execSync('COMMIT');
+    return id;
+  } catch (error) {
+    db.execSync('ROLLBACK');
+    throw error;
+  }
+}
+
+export function deleteSmartPlaylist(id: number): void {
+  db.runSync('DELETE FROM smart_rules WHERE playlist_id = ?', id);
+  db.runSync('DELETE FROM playlists WHERE id = ?', id);
+}
