@@ -1,23 +1,29 @@
-# CoryMusic
+<p align="center">
+  <a href="https://sabrinasalomon.github.io/CoryMusic/">
+    <img src="design/readme/banner.svg" width="100%" alt="CoryMusic — A premium, offline music player for iOS. Your music, your artists, your playlists.">
+  </a>
+</p>
 
-> A premium, offline music player for iOS — your music, your artists, your playlists. No ads, no accounts, no external services, zero cost.
+<p align="center">
+  <img src="https://img.shields.io/badge/iOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS 26+">
+  <img src="https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white" alt="Swift">
+  <img src="https://img.shields.io/badge/SwiftUI-Liquid%20Glass-7C3AED?style=for-the-badge&logo=swift&logoColor=white" alt="SwiftUI Liquid Glass">
+  <img src="https://img.shields.io/badge/Languages-EN%20%7C%20ES-7C3AED?style=for-the-badge" alt="Languages EN and ES">
+  <img src="https://img.shields.io/badge/Cost-%240-2EA043?style=for-the-badge" alt="Cost $0">
+  <img src="https://img.shields.io/badge/License-MIT-7C3AED?style=for-the-badge" alt="MIT License">
+</p>
 
-![Platform](https://img.shields.io/badge/iOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white)
-![Swift](https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white)
-![SwiftUI](https://img.shields.io/badge/SwiftUI-Liquid%20Glass-7C3AED?style=for-the-badge&logo=swift&logoColor=white)
-![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20ES-7C3AED?style=for-the-badge)
-![Cost](https://img.shields.io/badge/Cost-%240-2EA043?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-7C3AED?style=for-the-badge)
-
-<p align="center"><img src="design/icon/export/AppIcon-1024.png" width="160" alt="CoryMusic icon"></p>
+<p align="center">
+  <a href="https://sabrinasalomon.github.io/CoryMusic/">
+    <img src="design/readme/button-docs.svg" height="52" alt="View full documentation">
+  </a>
+</p>
 
 CoryMusic is a native iOS app built with **SwiftUI** and Apple's **Liquid Glass** design system. It plays audio files stored on your iPhone, organizes them around the artists you love, and keeps your playlists up to date automatically — entirely on-device, in English and Spanish.
 
 > **Status:** analysis and design complete. Development has not started.
 
----
-
-## Principles
+## <img src="design/readme/h-principles.svg" width="100%" alt="Principles">
 
 | Principle | What it means |
 |---|---|
@@ -28,9 +34,7 @@ CoryMusic is a native iOS app built with **SwiftUI** and Apple's **Liquid Glass*
 | **Private** | Your library, name and backups never leave your devices |
 | **Legal** | Plays only files you have the right to use; no audio in this repository |
 
----
-
-## Planned features (v1.0)
+## <img src="design/readme/h-features.svg" width="100%" alt="Planned features (v1.0)">
 
 | Area | Features |
 |---|---|
@@ -43,15 +47,11 @@ CoryMusic is a native iOS app built with **SwiftUI** and Apple's **Liquid Glass*
 | **Search** | Instant on-device search with scopes and highlighted matches |
 | **Safety** | Delete confirmation, weekly automatic backup to a folder you choose, restore with report |
 
----
-
-## Design
+## <img src="design/readme/h-design.svg" width="100%" alt="Design">
 
 Pure black background, purple accents and a glass purple **CM** monogram, built on Apple's native design system (Liquid Glass, SF Symbols, New York serif). See [docs/DESIGN.md](docs/DESIGN.md) and [BRAND.md](BRAND.md).
 
----
-
-## Tech stack
+## <img src="design/readme/h-tech-stack.svg" width="100%" alt="Tech stack">
 
 | Layer | Technology |
 |---|---|
@@ -66,9 +66,9 @@ Pure black background, purple accents and a glass purple **CM** monogram, built 
 | Architecture | MVVM + Services |
 | Third-party dependencies | None |
 
----
+## <img src="design/readme/h-documentation.svg" width="100%" alt="Documentation">
 
-## Documentation
+The full documentation is also available as a website: **[sabrinasalomon.github.io/CoryMusic](https://sabrinasalomon.github.io/CoryMusic/)**.
 
 | Document | Contents |
 |---|---|
@@ -82,12 +82,11 @@ Pure black background, purple accents and a glass purple **CM** monogram, built 
 | [Roadmap](docs/ROADMAP.md) | Phases, milestones and timeline |
 | [Brand](BRAND.md) | Name, monogram and icon usage |
 
----
-
-## Project structure
+## <img src="design/readme/h-structure.svg" width="100%" alt="Project structure">
 
 ```text
 CoryMusic/
+├── .github/workflows/          # Documentation site deployment
 ├── CoryMusic/                  # Xcode app target (created on Mac)
 │   ├── App/                    # Entry point, dependency setup
 │   ├── DesignSystem/           # Colors, typography, glass styles, components
@@ -97,18 +96,18 @@ CoryMusic/
 │   ├── Views/                  # SwiftUI screens
 │   └── Resources/              # Localizable.xcstrings, Info.plist
 ├── design/
-│   └── icon/                   # CoryMusic.icon, source SVG layers, PNG export
+│   ├── icon/                   # CoryMusic.icon, source SVG layers, PNG export
+│   └── readme/                 # README banner and section headers
 ├── docs/                       # Documentation and diagrams
 ├── playlists/                  # Backup format example (no audio)
-└── scripts/                    # Auto-renew script for free provisioning
+├── scripts/                    # Auto-renew script for free provisioning
+└── site/                       # Documentation website (GitHub Pages)
 ```
 
----
-
-## Music & copyright
+## <img src="design/readme/h-music-copyright.svg" width="100%" alt="Music and copyright">
 
 This repository contains **code, documentation and brand assets only**. Audio files are blocked by `.gitignore`. CoryMusic plays files you have the right to use — see [Music Sources](docs/MUSIC_SOURCES.md).
 
-## License
+## <img src="design/readme/h-license.svg" width="100%" alt="License">
 
 Code, documentation and brand assets (the CoryMusic name, CM monogram and app icon) are released under the [MIT License](LICENSE) © 2026 sabrinasalomon. See [BRAND.md](BRAND.md) for details.

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoryMusic Documentation</title>
+<meta name="description" content="Documentation for CoryMusic, a premium offline music player for iOS built with SwiftUI and Liquid Glass.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" type="image/png" href="design/icon/export/AppIcon-1024.png">
+<link rel="apple-touch-icon" href="design/icon/export/AppIcon-1024.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000; --surface: #07040F; --hairline: #2A1F45; --border: #3B2B66;
+    --accent: #A98BFF; --primary: #7C3AED; --text: #E6DEFA; --muted: #8A82A3;
+    --serif: "Cormorant Garamond", "New York", Georgia, serif;
+    --sans: Inter, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.65; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  .layout { display: flex; min-height: 100vh; }
+  nav { width: 260px; flex: none; border-right: 1px solid var(--hairline); padding: 28px 16px; position: sticky; top: 0; height: 100vh; overflow: auto; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; margin: 0 8px 6px; }
+  .brand img { width: 44px; height: 44px; border-radius: 11px; border: 1px solid var(--hairline); }
+  .brand span { font-family: var(--serif); font-weight: 600; font-size: 26px; color: var(--accent); }
+  .tag { color: var(--muted); font-size: 12px; margin: 0 8px 22px; letter-spacing: .12em; text-transform: uppercase; }
+  .nav-group { color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; margin: 18px 10px 6px; }
+  nav a.item { display: block; color: var(--muted); text-decoration: none; padding: 8px 10px; border-radius: 8px; font-size: 14.5px; }
+  nav a.item:hover { color: var(--text); background: rgba(124, 58, 237, .10); }
+  nav a.item.on { color: var(--text); background: rgba(124, 58, 237, .22); }
+  .gh { display: inline-flex; align-items: center; gap: 8px; margin: 22px 10px 0; font-size: 13.5px; color: var(--muted); text-decoration: none; }
+  .gh:hover { color: var(--text); }
+  main { flex: 1; min-width: 0; padding: 40px 56px 80px; }
+  .doc { max-width: 900px; }
+  .path { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .doc h1, .doc h2, .doc h3 { font-family: var(--serif); color: var(--accent); font-weight: 600; line-height: 1.2; }
+  .doc h1 { font-size: 44px; margin: 0 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--hairline); }
+  .doc h2 { font-size: 30px; margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--hairline); }
+  .doc h3 { font-size: 23px; margin: 30px 0 10px; }
+  .doc h4 { color: var(--text); margin: 24px 0 8px; }
+  .doc p, .doc li { font-size: 15.5px; }
+  .doc img { max-width: 100%; }
+  .table-wrap { overflow-x: auto; margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th, td { border: 1px solid var(--hairline); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--surface); color: var(--text); font-weight: 600; }
+  code { font-family: var(--mono); background: #100a20; border: 1px solid var(--hairline); padding: 1px 6px; border-radius: 5px; font-size: 13px; }
+  pre { background: var(--surface); border: 1px solid var(--hairline); border-radius: 10px; padding: 14px 16px; overflow: auto; }
+  pre code { background: none; border: none; padding: 0; }
+  blockquote { border-left: 3px solid var(--primary); margin: 16px 0; padding: 4px 16px; color: #cfc4ee; }
+  hr { border: none; border-top: 1px solid var(--hairline); margin: 32px 0; }
+  .mermaid { background: var(--surface); border: 1px solid var(--hairline); border-radius: 10px; padding: 18px; margin: 16px 0; overflow: auto; text-align: center; }
+  .loading { color: var(--muted); }
+  .menu-btn { display: none; }
+  footer { color: var(--muted); font-size: 13px; margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--hairline); }
+  @media (max-width: 860px) {
+    .layout { display: block; }
+    nav { width: auto; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--hairline); padding: 16px; }
+    .menu-btn { display: inline-block; position: absolute; right: 16px; top: 22px; background: none; border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 6px 12px; font: inherit; }
+    .nav-links { display: none; }
+    nav.open .nav-links { display: block; }
+    .tag { margin-bottom: 4px; }
+    main { padding: 24px 18px 60px; }
+    .doc h1 { font-size: 36px; }
+    .doc h2 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav id="nav">
+    <a class="brand" href="#/README.md"><img src="design/icon/export/AppIcon-1024.png" alt=""><span>CoryMusic</span></a>
+    <p class="tag">Documentation</p>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks">Menu</button>
+    <div class="nav-links" id="navLinks"></div>
+  </nav>
+  <main>
+    <div class="doc">
+      <div class="path" id="path"></div>
+      <article id="doc" class="loading">Loading…</article>
+      <footer>CoryMusic © 2026 sabrinasalomon · MIT License</footer>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+  const GROUPS = [
+    { title: "Overview", docs: [["README.md", "Overview"], ["BRAND.md", "Brand"]] },
+    { title: "Product", docs: [["docs/REQUIREMENTS.md", "Requirements"], ["docs/DESIGN.md", "Design"], ["docs/USER_FLOWS.md", "User flows"], ["docs/MUSIC_SOURCES.md", "Music sources"]] },
+    { title: "Engineering", docs: [["docs/ARCHITECTURE.md", "Architecture"], ["docs/DATA_MODEL.md", "Data model"], ["docs/SETUP.md", "Setup"], ["docs/ROADMAP.md", "Roadmap"]] }
+  ];
+  const ALL = GROUPS.flatMap(g => g.docs.map(d => d[0]));
+  const REPO = "https://github.com/sabrinasalomon/CoryMusic";
+
+  const navLinks = document.getElementById("navLinks");
+  navLinks.innerHTML = GROUPS.map(g =>
+    `<div class="nav-group">${g.title}</div>` +
+    g.docs.map(([p, label]) => `<a class="item" href="#/${p}" data-path="${p}">${label}</a>`).join("")
+  ).join("") +
+    `<a class="gh" href="${REPO}"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</a>`;
+
+  const menuBtn = document.getElementById("menuBtn");
+  menuBtn.addEventListener("click", () => {
+    const open = document.getElementById("nav").classList.toggle("open");
+    menuBtn.setAttribute("aria-expanded", String(open));
+  });
+
+  mermaid.initialize({
+    startOnLoad: false, theme: "dark",
+    themeVariables: { background: "#07040F", primaryColor: "#1a1030", primaryBorderColor: "#7C3AED", primaryTextColor: "#E6DEFA", lineColor: "#A98BFF", secondaryColor: "#120b24", tertiaryColor: "#0c0718" }
+  });
+
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const renderer = new marked.Renderer();
+  renderer.code = (code, lang) => {
+    const text = typeof code === "object" ? code.text : code;
+    const language = typeof code === "object" ? code.lang : lang;
+    return language === "mermaid" ? `<pre class="mermaid">${esc(text)}</pre>` : `<pre><code>${esc(text)}</code></pre>`;
+  };
+  renderer.table = function (...args) {
+    const html = marked.Renderer.prototype.table.apply(this, args);
+    return `<div class="table-wrap">${html}</div>`;
+  };
+  marked.use({ renderer });
+
+  function resolve(base, rel) {
+    const parts = base.split("/").slice(0, -1);
+    for (const seg of rel.split("/")) {
+      if (seg === "..") parts.pop();
+      else if (seg !== ".") parts.push(seg);
+    }
+    return parts.join("/");
+  }
+
+  let counter = 0;
+  async function show() {
+    const hash = decodeURIComponent(location.hash.replace(/^#\//, ""));
+    const [path, anchor] = hash.split("#");
+    const docPath = ALL.includes(path) ? path : "README.md";
+    document.querySelectorAll("nav a.item").forEach(a => a.classList.toggle("on", a.dataset.path === docPath));
+    document.getElementById("nav").classList.remove("open");
+    menuBtn.setAttribute("aria-expanded", "false");
+    document.getElementById("path").textContent = docPath;
+    const el = document.getElementById("doc");
+    el.className = "loading";
+    el.textContent = "Loading…";
+    try {
+      const res = await fetch(docPath, { cache: "no-cache" });
+      if (!res.ok) throw new Error(res.status);
+      const md = await res.text();
+      el.className = "";
+      el.innerHTML = marked.parse(md);
+    } catch (e) {
+      el.className = "";
+      el.innerHTML = `<h1>Not found</h1><p>This document could not be loaded.</p>`;
+      return;
+    }
+    el.querySelectorAll("img").forEach(img => {
+      const src = img.getAttribute("src") || "";
+      if (!/^(https?:|data:|\/)/.test(src)) img.src = resolve(docPath, src);
+    });
+    el.querySelectorAll("a[href]").forEach(a => {
+      const href = a.getAttribute("href");
+      if (/^(https?:|mailto:)/.test(href)) return;
+      if (href.startsWith("#")) { a.href = `#/${docPath}${href}`; return; }
+      const [file, frag] = href.split("#");
+      const target = resolve(docPath, file);
+      if (ALL.includes(target)) a.href = `#/${target}${frag ? "#" + frag : ""}`;
+      else a.href = `${REPO}/blob/main/${target}`;
+    });
+    el.querySelectorAll("h1, h2, h3").forEach(h => {
+      h.id = h.textContent.trim().toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
+    });
+    for (const block of el.querySelectorAll(".mermaid")) {
+      try {
+        const { svg } = await mermaid.render("diagram" + counter++, block.textContent);
+        block.innerHTML = svg;
+      } catch (err) {
+        block.textContent = "Diagram could not be rendered.";
+      }
+    }
+    const target = anchor && document.getElementById(anchor);
+    if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
+    document.title = (docPath === "README.md" ? "CoryMusic" : el.querySelector("h1")?.textContent + " · CoryMusic") + " Documentation";
+  }
+  window.addEventListener("hashchange", show);
+  show();
+</script>
+</body>
+</html>

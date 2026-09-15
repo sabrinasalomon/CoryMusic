@@ -13,6 +13,9 @@ xcuserdata/
 timeline.xctimeline
 playground.xcworkspace
 
+# ---- Documentation site build output ----
+_site/
+
 # ---- Swift Package Manager ----
 .build/
 .swiftpm/
