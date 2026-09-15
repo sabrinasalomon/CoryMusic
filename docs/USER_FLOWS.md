@@ -21,6 +21,7 @@ flowchart LR
     T1 --> Profile[Profile]
     T1 --> Settings[Settings]
     Settings --> Profile
+    Settings --> Backup[Backup and restore]
 
     T2 --> Songs[Songs]
     T2 --> Artists[Artists]
@@ -60,7 +61,8 @@ flowchart TD
     D -- ogg or other unsupported --> E[Count as not supported]
     D -- same name and size already imported --> F[Count as duplicate]
     D -- new --> G[Copy into the app and read artist - title from the name]
-    E & F & G --> H[Summary alert]
+    G --> P[Apply pending favorites and plays from a backup, if any]
+    E & F & P --> H[Summary alert]
     H --> I[Library, Recently added and smart playlists update]
 ```
 
@@ -115,12 +117,37 @@ flowchart TD
     C & F --> G[Smart playlists re-evaluate]
 ```
 
-## 7. Planned flows
+## 7. Backup and restore
+
+```mermaid
+flowchart TD
+    A([App launch]) --> B{Weekly backup on and 7 days passed?}
+    B -- Yes --> C[Automatic backup inside the app, keep 5]
+    B -- No --> D[Continue]
+
+    E[Settings - Backup and restore] --> F{Action}
+    F -- Save backup --> G[Automatic backup + share sheet]
+    G --> H[Save to Files or OneDrive]
+    H --> I[Last saved date updates]
+    F -- Restore from file --> J[Pick corymusic-backup file]
+    F -- Tap an automatic backup --> K[Read backup]
+    J --> L{Valid CoryMusic backup?}
+    K --> L
+    L -- No --> M[Error: not a CoryMusic backup]
+    L -- Yes --> N[Confirmation with songs, playlists and profile]
+    N -- Restore --> O[Safety backup of the current library]
+    O --> P[Restore profile, playlists, favorites and plays]
+    P --> Q[Report: playlists, songs updated, songs pending]
+    Q --> R[Pending songs recover their data when imported]
+
+    S{No backup saved outside the app in 7 days?} -- Yes --> T[Amber reminder on the Backup screen]
+```
+
+## 8. Planned flows
 
 | Flow | Summary |
 |---|---|
 | Now Playing | Full-screen player with queue, shuffle, repeat and sleep timer |
 | Delete a song | Confirmation, then remove from library, playlists and storage |
 | To review | Complete missing song data with suggestions |
-| Backup | Weekly automatic JSON backup and restore report |
-| Entrada folder | Automatic import on launch in the installed app |
+| Entrada folder | Automatic import from CoryMusic's own folder in Files |

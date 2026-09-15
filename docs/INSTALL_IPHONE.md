@@ -85,19 +85,21 @@ The first time, the iPhone may block the app:
 2. Open **CoryMusic** from the Home Screen.
 3. Play a song, lock the iPhone: the music keeps playing and the song appears on the Lock Screen.
 
-## 8. Bring your music into the installed app
+## 8. Bring your music and playlists into the installed app
 
-The installed app and Expo Go keep **separate data**. The first time:
+The installed app and Expo Go keep **separate data**. Move everything with a backup:
 
-1. Complete the welcome screens.
-2. **Library → Music folder → Choose folder** and pick your music folder — all songs import in one go.
-3. Recreate your smart playlists (suggestions take one tap).
+1. **Before installing**, in Expo Go: **Settings → Backup and restore → Save backup** and save the file to Files or OneDrive.
+2. In the installed app, complete the welcome screens.
+3. **Settings → Backup and restore → Restore from file** and choose that backup — your profile, smart playlists, favorites and plays come back.
+4. **Library → Music folder → Choose folder** and pick your music folder. As songs import, they recover their hearts and plays automatically.
 
 ## 9. Keep your data safe
 
 | Rule | Why |
 |---|---|
-| **Never delete the app** from the iPhone | Deleting the app deletes its songs, playlists and profile |
+| **Save a backup outside the app every week** | Settings → Backup and restore → Save backup; the app reminds you after 7 days |
+| **Never delete the app** from the iPhone | Deleting the app deletes its songs, playlists, profile and automatic backups |
 | **Never change the bundle identifier** | Another identifier is a different app with no data |
 | **Re-install before 7 days pass** | After 7 days the app won't open — your data is still there and comes back when you re-install |
 

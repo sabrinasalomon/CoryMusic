@@ -134,10 +134,11 @@ Icons are **SF Symbols** through `expo-symbols`.
 | **Smart playlist detail** | ✅ | Rules summary, Play, matching songs, Edit rules |
 | **Smart playlist editor** | ✅ | Name, match all / any, rule cards with chips, sort, limit, live preview, delete |
 | **Profile** | ✅ | Photo, name, language, stats |
-| **Settings** | ✅ | Profile card, music folder, library, playback, privacy, version |
+| **Settings** | ✅ | Profile card, music folder, library, playback, backup, privacy, version |
+| **Backup** | ✅ | Status card (amber reminder after 7 days without saving outside the app), Save backup (primary), Restore from file, what's saved, weekly automatic switch, automatic backups list, pending songs |
 | **Search** | 🟡 Layout | Search field and library shortcuts; results are planned |
 | **Now Playing, Queue, Lyrics, Sleep timer** | 🔜 | Approved in mockups |
-| **Album, Delete confirmation, To review, Backup** | 🔜 | Approved in mockups |
+| **Album, Delete confirmation, To review** | 🔜 | Approved in mockups |
 
 ## 9. Naming glossary (UI copy)
 

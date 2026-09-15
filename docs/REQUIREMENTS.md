@@ -95,7 +95,7 @@
 | FR-20b | Full Now Playing screen: next, previous, seek | Must | 🔜 |
 | FR-21 | Shuffle and repeat | Must | 🔜 |
 | FR-22 | Queue | Must | 🔜 |
-| FR-23 | Background playback and Lock Screen controls | Must | 🧪 installed app |
+| FR-23 | Background playback and song details on the Lock Screen | Must | 🧪 configured, works in the installed app |
 | FR-25 | Sleep timer with fade-out | Should | 🔜 |
 | FR-27 | Lyrics written or pasted by the user | Could | 🔜 |
 | FR-51 | Continue with similar songs when the queue ends | Should | 🔜 |
@@ -114,9 +114,11 @@
 | ID | Requirement | Priority | Status |
 |---|---|---|---|
 | FR-38 | Instant search as you type | Must | 🔜 |
-| FR-42 | Export and restore a JSON backup | Must | 🔜 |
-| FR-52 | Weekly automatic backup to a folder outside the app | Must | 🔜 |
-| FR-44 | Settings: profile card, music folder, library, playback, privacy, version | Must | ✅ (toggles are visual for now) |
+| FR-42 | Save a JSON backup (profile, smart playlists, favorites, plays) through the iOS share sheet to Files or OneDrive | Must | ✅ |
+| FR-43 | Restore from a file or from an automatic backup, with confirmation, a safety backup first and a report | Must | ✅ |
+| FR-57 | Songs in a backup that aren't imported yet stay pending and get their favorites and plays back when imported | Should | ✅ |
+| FR-52 | Weekly automatic backup inside the app, keeping the 5 most recent, plus a reminder when no backup was saved outside the app in 7 days | Must | ✅ |
+| FR-44 | Settings: profile card, music folder, library, playback, backup, privacy, version | Must | ✅ (library and playback toggles are visual for now) |
 
 ---
 

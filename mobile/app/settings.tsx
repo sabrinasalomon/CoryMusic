@@ -96,6 +96,18 @@ export default function SettingsScreen() {
             last
           />
         </Section>
+        <Section title={t('settings.backup')}>
+          <Pressable onPress={() => router.push('/backup')} accessibilityRole="button">
+            <Row
+              symbol="externaldrive.badge.checkmark"
+              label={t('settings.backupRow')}
+              hint={t('settings.backupHint')}
+              trailing={<SymbolView name="chevron.right" size={13} tintColor={colors.textTertiary} />}
+              last
+            />
+          </Pressable>
+        </Section>
+
         <Section title={t('settings.about')}>
           <Row symbol="lock.shield" label={t('settings.privacy')} hint={t('settings.privacyHint')} />
           <Row

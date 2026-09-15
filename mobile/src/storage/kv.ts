@@ -8,6 +8,9 @@ export const KEYS = {
   folderUri: 'folder.uri',
   folderName: 'folder.name',
   folderLastSync: 'folder.lastSyncAt',
+  backupAutoWeekly: 'backup.autoWeekly',
+  backupLastAuto: 'backup.lastAutoAt',
+  backupLastExport: 'backup.lastExportAt',
 } as const;
 
 export const kv = {
@@ -21,3 +24,8 @@ export const kv = {
     Storage.removeItemSync(key);
   },
 };
+
+export function readTimestamp(key: string): number | null {
+  const value = Number(kv.get(key));
+  return Number.isFinite(value) && value > 0 ? value : null;
+}

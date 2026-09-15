@@ -29,8 +29,14 @@
       "expo-font",
       "expo-status-bar",
       "expo-sqlite",
-      ["expo-audio", { "enableBackgroundPlayback": true }],
-      "expo-asset"
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true
+        }
+      ],
+      "expo-asset",
+      "expo-sharing"
     ]
   }
 }

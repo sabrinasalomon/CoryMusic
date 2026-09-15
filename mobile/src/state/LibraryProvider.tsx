@@ -18,7 +18,7 @@ import { pickMusicFolder, scanMusicFolder } from '../library/folder';
 import { importCandidates, importFromFiles } from '../library/importer';
 import type { ImportSummary } from '../library/importer';
 import type { SmartPlaylist, SmartPlaylistDraft } from '../smart/rules';
-import { KEYS, kv } from '../storage/kv';
+import { KEYS, kv, readTimestamp } from '../storage/kv';
 
 export type ArtistSummary = { name: string | null; count: number };
 
@@ -43,6 +43,7 @@ type LibraryContextValue = {
   recordPlay: (trackId: number) => void;
   saveSmartPlaylist: (draft: SmartPlaylistDraft) => number;
   deleteSmartPlaylist: (id: number) => void;
+  reload: () => void;
 };
 
 const LibraryContext = createContext<LibraryContextValue | null>(null);
@@ -51,8 +52,7 @@ function readMusicFolder(): MusicFolder | null {
   const uri = kv.get(KEYS.folderUri);
   const name = kv.get(KEYS.folderName);
   if (!uri || !name) return null;
-  const lastSync = Number(kv.get(KEYS.folderLastSync));
-  return { uri, name, lastSyncAt: Number.isFinite(lastSync) && lastSync > 0 ? lastSync : null };
+  return { uri, name, lastSyncAt: readTimestamp(KEYS.folderLastSync) };
 }
 
 export function LibraryProvider({ children }: { children: ReactNode }) {
@@ -62,6 +62,11 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   const [musicFolder, setMusicFolder] = useState<MusicFolder | null>(readMusicFolder);
   const [syncing, setSyncing] = useState(false);
   const sessionFolder = useRef<Directory | null>(null);
+
+  const reload = useCallback(() => {
+    setTracks(listTracks());
+    setSmartPlaylists(listSmartPlaylists());
+  }, []);
 
   const summaryLines = useCallback(
     (summary: ImportSummary) => {
@@ -208,6 +213,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       recordPlay,
       saveSmartPlaylist,
       deleteSmartPlaylist,
+      reload,
     };
   }, [
     tracks,
@@ -222,6 +228,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     recordPlay,
     saveSmartPlaylist,
     deleteSmartPlaylist,
+    reload,
   ]);
 
   return <LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>;

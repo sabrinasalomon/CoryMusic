@@ -16,6 +16,12 @@ export type Track = {
   isFavorite: boolean;
 };
 
+export type TrackStats = {
+  isFavorite: boolean;
+  playCount: number;
+  lastPlayedAt: number | null;
+};
+
 type TrackRow = {
   id: number;
   title: string;
@@ -44,6 +50,12 @@ type RuleRow = {
   field: string;
   condition: string;
   value: string;
+};
+
+type PendingRow = {
+  is_favorite: number;
+  play_count: number;
+  last_played_at: number | null;
 };
 
 const db = openDatabaseSync('corymusic.db');
@@ -81,6 +93,14 @@ db.execSync(`
     condition TEXT NOT NULL,
     value TEXT NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS pending_track_stats (
+    original_name TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    is_favorite INTEGER NOT NULL DEFAULT 0,
+    play_count INTEGER NOT NULL DEFAULT 0,
+    last_played_at INTEGER,
+    PRIMARY KEY (original_name, size_bytes)
+  );
 `);
 
 const trackColumns = db.getAllSync<{ name: string }>('PRAGMA table_info(tracks)').map((column) => column.name);
@@ -108,13 +128,52 @@ export function listTracks(): Track[] {
 }
 
 export function isDuplicate(originalName: string, sizeBytes: number): boolean {
+  return findTrackIdByOriginal(originalName, sizeBytes) !== null;
+}
+
+export function findTrackIdByOriginal(originalName: string, sizeBytes: number): number | null {
   return (
-    db.getFirstSync<{ id: number }>('SELECT id FROM tracks WHERE original_name = ? AND size_bytes = ?', originalName, sizeBytes) !== null
+    db.getFirstSync<{ id: number }>('SELECT id FROM tracks WHERE original_name = ? AND size_bytes = ?', originalName, sizeBytes)?.id ?? null
   );
 }
 
-export function insertTrack(track: Pick<Track, 'title' | 'artist' | 'fileName' | 'originalName' | 'sizeBytes'>): void {
+export function mergeTrackStats(trackId: number, stats: TrackStats): void {
   db.runSync(
+    `UPDATE tracks SET
+       is_favorite = MAX(is_favorite, ?),
+       play_count = MAX(play_count, ?),
+       last_played_at = CASE
+         WHEN ? IS NULL THEN last_played_at
+         WHEN last_played_at IS NULL OR ? > last_played_at THEN ?
+         ELSE last_played_at
+       END
+     WHERE id = ?`,
+    stats.isFavorite ? 1 : 0,
+    stats.playCount,
+    stats.lastPlayedAt,
+    stats.lastPlayedAt,
+    stats.lastPlayedAt,
+    trackId,
+  );
+}
+
+export function savePendingStats(originalName: string, sizeBytes: number, stats: TrackStats): void {
+  db.runSync(
+    'INSERT OR REPLACE INTO pending_track_stats (original_name, size_bytes, is_favorite, play_count, last_played_at) VALUES (?, ?, ?, ?, ?)',
+    originalName,
+    sizeBytes,
+    stats.isFavorite ? 1 : 0,
+    stats.playCount,
+    stats.lastPlayedAt,
+  );
+}
+
+export function countPendingStats(): number {
+  return db.getFirstSync<{ total: number }>('SELECT COUNT(*) AS total FROM pending_track_stats')?.total ?? 0;
+}
+
+export function insertTrack(track: Pick<Track, 'title' | 'artist' | 'fileName' | 'originalName' | 'sizeBytes'>): number {
+  const result = db.runSync(
     'INSERT INTO tracks (title, artist, file_name, original_name, size_bytes, imported_at) VALUES (?, ?, ?, ?, ?, ?)',
     track.title,
     track.artist,
@@ -123,6 +182,19 @@ export function insertTrack(track: Pick<Track, 'title' | 'artist' | 'fileName' |
     track.sizeBytes,
     Date.now(),
   );
+  const id = result.lastInsertRowId;
+
+  const pending = db.getFirstSync<PendingRow>(
+    'SELECT is_favorite, play_count, last_played_at FROM pending_track_stats WHERE original_name = ? AND size_bytes = ?',
+    track.originalName,
+    track.sizeBytes,
+  );
+  if (pending) {
+    mergeTrackStats(id, { isFavorite: pending.is_favorite === 1, playCount: pending.play_count, lastPlayedAt: pending.last_played_at });
+    db.runSync('DELETE FROM pending_track_stats WHERE original_name = ? AND size_bytes = ?', track.originalName, track.sizeBytes);
+  }
+
+  return id;
 }
 
 export function recordPlay(trackId: number): void {

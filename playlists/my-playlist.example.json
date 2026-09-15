@@ -1,54 +1,52 @@
 {
   "app": "CoryMusic",
   "schemaVersion": 1,
-  "exportedAt": "2026-09-14T00:00:00Z",
-  "favoriteArtists": ["Artist One"],
+  "exportedAt": "2026-09-15T21:30:00.000Z",
+  "profile": {
+    "name": "Cory",
+    "language": "system",
+    "photo": null
+  },
   "tracks": [
     {
-      "fileName": "artist-one - song-title-a.mp3",
-      "duration": 201.0,
-      "title": "Song Title A",
-      "artist": "Artist One",
-      "album": "Album Title",
-      "year": 2026,
+      "originalName": "Nova Reyes - Violet Hour.mp3",
+      "sizeBytes": 8412345,
+      "title": "Violet Hour",
+      "artist": "Nova Reyes",
       "isFavorite": true,
-      "playCount": 0,
-      "lyrics": null
+      "playCount": 12,
+      "lastPlayedAt": 1789500000000,
+      "importedAt": 1789000000000
     },
     {
-      "fileName": "artist-two - song-title-b.m4a",
-      "duration": 187.5,
-      "title": "Song Title B",
-      "artist": "Artist Two",
-      "album": "",
-      "year": null,
+      "originalName": "Iris Vale - Paper Satellites.m4a",
+      "sizeBytes": 6120450,
+      "title": "Paper Satellites",
+      "artist": "Iris Vale",
       "isFavorite": false,
-      "playCount": 0,
-      "lyrics": null
+      "playCount": 3,
+      "lastPlayedAt": null,
+      "importedAt": 1789100000000
     }
   ],
-  "playlists": [
+  "smartPlaylists": [
     {
-      "name": "Mis favoritas",
-      "kind": "normal",
-      "isPinned": true,
-      "cover": { "style": "symbol", "symbol": "heart.fill" },
-      "tracks": [
-        "artist-one - song-title-a.mp3",
-        "artist-two - song-title-b.m4a"
-      ]
-    },
-    {
-      "name": "Lo nuevo de Artist One",
-      "kind": "smart",
-      "isPinned": false,
-      "cover": { "style": "initials" },
+      "name": "Late night favorites",
       "matchMode": "all",
       "sortBy": "recentlyAdded",
       "limit": null,
       "rules": [
-        { "field": "artist", "condition": "is", "value": "Artist One" },
-        { "field": "importedAt", "condition": "inTheLast", "value": "30d" }
+        { "field": "importedAt", "condition": "inLast", "value": "30" },
+        { "field": "favorite", "condition": "isTrue", "value": "" }
+      ]
+    },
+    {
+      "name": "Most played",
+      "matchMode": "all",
+      "sortBy": "mostPlayed",
+      "limit": 50,
+      "rules": [
+        { "field": "playCount", "condition": "greaterThan", "value": "0" }
       ]
     }
   ]

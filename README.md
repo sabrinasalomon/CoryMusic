@@ -64,6 +64,8 @@
 | **Playback** | Tap a song to play or pause, mark favorites with a heart; plays are counted after half the song |
 | **Smart playlists** | Rules by artist, title, import date, plays, last played and favorite; match all or any; sort, limit and live preview; four one-tap suggestions |
 | **Profile** | Photo from your gallery, name, in-app language (System, Español, English) and library stats |
+| **Backup** | Save a backup to Files or OneDrive, automatic weekly backups on the iPhone (keeps 5), restore playlists, favorites, plays and profile; songs not imported yet get their data back later |
+| **Installed app** | Install the Release app on your own iPhone to use it without a computer, with background audio and Lock Screen details — see [Install on iPhone](docs/INSTALL_IPHONE.md) |
 | **Design** | Native iOS 26 tab bar with Liquid Glass, SF Symbols, haptics, English and Spanish |
 
 ### Coming next
@@ -73,8 +75,7 @@
 | **Now Playing** | Full-screen player, queue, shuffle, repeat, sleep timer |
 | **Metadata** | Albums and artwork from file tags, review queue, on-device suggestions |
 | **Library** | Album pages, search results, normal playlists, delete with confirmation |
-| **Installed app** | Background audio, Lock Screen controls, automatic *Entrada* folder |
-| **Backup** | Weekly automatic backup and restore |
+| **Entrada folder** | Automatic import from CoryMusic's own folder in Files |
 
 ## <img src="design/readme/h-try-it.svg" width="100%" alt="Try it on your iPhone">
 
@@ -101,8 +102,8 @@ Pure black background, purple accents, serif titles and Apple's Liquid Glass on 
 | Navigation | Expo Router with native iOS tabs (Liquid Glass) |
 | Look and feel | expo-glass-effect · expo-symbols (SF Symbols) · expo-linear-gradient · expo-haptics |
 | Data | expo-sqlite (library and smart playlists) · SQLite key-value store (profile and settings) |
-| Files | expo-file-system · expo-document-picker · expo-image-picker |
-| Audio | expo-audio |
+| Files | expo-file-system · expo-document-picker · expo-image-picker · expo-sharing |
+| Audio | expo-audio (background playback in the installed app) |
 | Languages | i18next · expo-localization — English and Spanish |
 | Network | None |
 
@@ -134,14 +135,15 @@ CoryMusic/
 │   └── screenshots/          # App screens used in this README
 ├── docs/                     # Documentation and diagrams
 ├── mobile/                   # The Expo app
-│   ├── app/                  # Screens (Expo Router): tabs, welcome, profile, settings, smart playlists
+│   ├── app/                  # Screens (Expo Router): tabs, welcome, profile, settings, backup, smart playlists
 │   ├── assets/               # App icon
 │   └── src/
+│       ├── backup/           # Backup format, save, share and restore
 │       ├── components/       # Screen, buttons, cards, track rows, avatar
 │       ├── i18n/             # English and Spanish strings
 │       ├── library/          # SQLite, file import, folder sync
 │       ├── smart/            # Smart playlist rules engine
-│       ├── state/            # Profile, library and player providers
+│       ├── state/            # Profile, library, backup and player providers
 │       ├── storage/          # Key-value settings
 │       └── theme/            # Design tokens
 ├── playlists/                # Backup format example (no audio)
