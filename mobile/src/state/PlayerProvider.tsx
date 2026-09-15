@@ -1,6 +1,7 @@
 import { createAudioPlayer, setAudioModeAsync, useAudioPlayerStatus } from 'expo-audio';
 import type { ReactNode } from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { Track } from '../library/db';
 import { musicFile } from '../library/files';
@@ -15,6 +16,7 @@ type PlayerContextValue = {
 const PlayerContext = createContext<PlayerContextValue | null>(null);
 
 export function PlayerProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const { recordPlay } = useLibrary();
   const player = useMemo(() => createAudioPlayer(null), []);
   const status = useAudioPlayerStatus(player);
@@ -22,7 +24,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const countedTrackId = useRef<number | null>(null);
 
   useEffect(() => {
-    setAudioModeAsync({ playsInSilentMode: true });
+    setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: true });
     return () => player.remove();
   }, [player]);
 
@@ -46,8 +48,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       player.replace({ uri: musicFile(track.fileName).uri });
       player.play();
       setCurrentTrackId(track.id);
+
+      try {
+        player.setActiveForLockScreen(
+          true,
+          { title: track.title, artist: track.artist ?? t('common.unknownArtist'), albumTitle: 'CoryMusic' },
+          { showSeekForward: false, showSeekBackward: false },
+        );
+      } catch {
+        // Lock Screen controls are only available in the installed app.
+      }
     },
-    [currentTrackId, status.playing, player],
+    [currentTrackId, status.playing, player, t],
   );
 
   const value = useMemo(

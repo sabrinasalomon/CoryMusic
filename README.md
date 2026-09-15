@@ -119,6 +119,7 @@ The full documentation is also available as a website: **[sabrinasalomon.github.
 | [User Flows](docs/USER_FLOWS.md) | Screen map and main flows |
 | [Music Sources](docs/MUSIC_SOURCES.md) | Where to find free, legal music |
 | [Setup](docs/SETUP.md) | Run the app with Expo Go and troubleshooting |
+| [Install on iPhone](docs/INSTALL_IPHONE.md) | Install the real app so it works without a computer |
 | [Roadmap](docs/ROADMAP.md) | What's done and what's next |
 | [Brand](BRAND.md) | Name, monogram and icon usage |
 

@@ -69,6 +69,6 @@ npx expo-doctor
 
 Both must pass. Never add third-party attribution or watermarks to commits, code or docs.
 
-## 8. Installed app (later)
+## 8. Install it as a real app
 
-Background audio, Lock Screen controls and the automatic *Entrada* folder need a **development build** installed on the iPhone. This requires a Mac with Xcode and a free Apple ID; apps signed this way expire after 7 days and must be re-installed (data is kept). The helper scripts in [`scripts/`](../scripts) will be updated for the Expo project when that phase starts.
+To use CoryMusic without the computer or Expo Go — with background audio and Lock Screen controls — install the Release app from a Mac with Xcode and a free Apple ID. Follow [INSTALL_IPHONE.md](INSTALL_IPHONE.md).
